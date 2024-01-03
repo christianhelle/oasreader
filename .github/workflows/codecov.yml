@@ -33,7 +33,7 @@ jobs:
       uses: actions/checkout@v4    
     
     - name: 🧪 Test
-      run: dotnet test src/Refitter.Tests/Refitter.Tests.csproj -c Release --collect "Code coverage" -p:UseSourceLink=true -p:PackageVersion="${{ env.VERSION }}"
+      run: dotnet test src/OasReader.Tests/OasReader.Tests.csproj -c Release --collect "Code coverage" -p:UseSourceLink=true -p:PackageVersion="${{ env.VERSION }}"
     
     - name: 🗳️ Upload
       uses: actions/upload-artifact@v3
