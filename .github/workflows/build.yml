@@ -19,9 +19,6 @@ on:
     branches:
       - '*'
 
-env:
-  VERSION: 0.1.0.${{ github.run_number }}
-
 jobs:
   build:
     name: 👌 Verify build
@@ -30,7 +27,7 @@ jobs:
     - name: 🛒 Checkout repository
       uses: actions/checkout@v4        
     - name: 🛠️ Build
-      run: dotnet build -c Release OasReader.sln -p:UseSourceLink=true -p:PackageVersion="${{ env.VERSION }}" -p:Version="${{ env.VERSION }}"
+      run: dotnet build -c Release OasReader.sln -p:UseSourceLink=true
     - name: 🧪 Test
       run: dotnet test OasReader.sln -c Release    
     - name: 🗳️ Upload

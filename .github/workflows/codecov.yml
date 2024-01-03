@@ -19,9 +19,6 @@ on:
     branches:
       - '*'
 
-env:
-  VERSION: 0.1.0.${{ github.run_number }}
-
 jobs:
   build:
     name: 👌 Verify build
@@ -33,7 +30,7 @@ jobs:
       uses: actions/checkout@v4    
     
     - name: 🧪 Test
-      run: dotnet test src/OasReader.Tests/OasReader.Tests.csproj -c Release --collect "Code coverage" -p:UseSourceLink=true -p:PackageVersion="${{ env.VERSION }}"
+      run: dotnet test src/OasReader.Tests/OasReader.Tests.csproj -c Release --collect "Code coverage" -p:UseSourceLink=true
     
     - name: 🗳️ Upload
       uses: actions/upload-artifact@v3
