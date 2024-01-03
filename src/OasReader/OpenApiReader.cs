@@ -8,7 +8,7 @@ namespace OasReader.OAS;
 
 public static class OpenApiReader
 {
-    public static async Task<OpenApiDocument> Load(string openApiFile, CancellationToken cancellationToken)
+    public static async Task<OpenApiDocument> Load(string openApiFile, CancellationToken cancellationToken = default)
     {
         var directoryName = new FileInfo(openApiFile).DirectoryName;
         var openApiReaderSettings = new OpenApiReaderSettings
