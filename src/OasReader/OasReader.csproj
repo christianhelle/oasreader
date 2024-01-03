@@ -13,7 +13,7 @@
     <PackageId>OasReader</PackageId>
     <AssemblyName>OasReader</AssemblyName>
     <RootNamespace>OasReader</RootNamespace>
-    <Product>OasReader</Product>
+    <Product>OpenAPI Multi Document Reader</Product>
     <Description>An OpenAPI reader that merges external references into a single document for .NET using the [Microsoft OpenAPI](https://www.nuget.org/packages/Microsoft.OpenApi.readers) toolset</Description>
     <Authors>Christian Resma Helle</Authors>
     <Company>Christian Resma Helle</Company>
