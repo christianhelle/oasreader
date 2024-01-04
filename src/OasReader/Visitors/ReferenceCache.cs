@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 
-namespace OasReader.Merger;
+namespace OasReader.Visitors;
 
 internal class ReferenceCache
 {

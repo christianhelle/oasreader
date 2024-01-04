@@ -3,9 +3,9 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Microsoft.OpenApi.Services;
 
-namespace OasReader.Merger.Visitors
+namespace OasReader.Visitors
 {
-    public class OpenApiReferenceResolverVisitor : OpenApiVisitorBase
+    internal class OpenApiReferenceResolverVisitor : OpenApiVisitorBase
     {
         private readonly Dictionary<string, OpenApiDocument> documentCache;
         private static readonly Lazy<HttpClient> HttpClient = new();
@@ -14,13 +14,13 @@ namespace OasReader.Merger.Visitors
         internal ReferenceCache Cache { get; } = new();
 
         public OpenApiReferenceResolverVisitor(
-            string input,
+            string openApiFile,
             Dictionary<string, OpenApiDocument> documentCache)
         {
             this.documentCache = documentCache;
 
             files = Directory
-                .GetFiles(Path.GetDirectoryName(input)!, $"*{Path.GetExtension(input)}", SearchOption.AllDirectories)
+                .GetFiles(Path.GetDirectoryName(openApiFile)!, $"*{Path.GetExtension(openApiFile)}", SearchOption.AllDirectories)
                 .Select(f => new FileInfo(f))
                 .Where(f => f.Exists)
                 .ToList();
