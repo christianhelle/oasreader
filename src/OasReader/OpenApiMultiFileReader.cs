@@ -6,7 +6,7 @@ namespace Microsoft.OpenApi.Readers;
 
 public static class OpenApiMultiFileReader
 {
-    public static async Task<OpenApiDocument> Read(string openApiFile, CancellationToken cancellationToken = default)
+    public static async Task<ReadResult> Read(string openApiFile, CancellationToken cancellationToken = default)
     {
         var directoryName = new FileInfo(openApiFile).DirectoryName;
         var openApiReaderSettings = new OpenApiReaderSettings
@@ -21,12 +21,16 @@ public static class OpenApiMultiFileReader
         var result = await streamReader.ReadAsync(stream, cancellationToken);
         var document = result.OpenApiDocument;
 
-        if (document.ContainsExternalReferences())
+        if (result.OpenApiDocument.ContainsExternalReferences())
         {
             document = document.MergeExternalReferences(openApiFile);
         }
 
-        return document ?? throw new InvalidOperationException($"Could not read the OpenAPI file at {openApiFile}");
+        return new ReadResult
+        {
+            OpenApiDiagnostic = result.OpenApiDiagnostic,
+            OpenApiDocument = document ?? throw new InvalidOperationException($"Could not read the OpenAPI file at {openApiFile}")
+        };
     }
 
     private static async Task<Stream> GetStream(string input)
