@@ -12,7 +12,8 @@ An OpenAPI reader that merges external references into a single document using t
 The class `OpenApiMultiFileReader` is used to load an OpenAPI specifications document file locally or remotely using a YAML or JSON file. `OpenApiMultiFileReader` will automatically merge external references if the OAS file uses them. Merging external referenecs that the file is in the same folder as the main OAS file. When loading OAS files remotely, the external references must also be remote files. Currently, you can not load a remote OAS file that has external references to local files. 
 
 ```csharp
-OpenApiDocument document = await OpenApiMultiFileReader.Read("petstore.yaml");
+ReadResult result = await OpenApiMultiFileReader.Read("petstore.yaml");
+OpenApiDocument document = result.OpenApiDocument;
 ```
 
 In the example above, we have OpenAPI specifications that are split into multiple documents. **`petstore.yaml`** contains the **`paths`** and **`petstore.components.yaml`** contain the **`components/schemas`**

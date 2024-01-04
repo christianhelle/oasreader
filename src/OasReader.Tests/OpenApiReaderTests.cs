@@ -12,7 +12,7 @@ public class OpenApiReaderTests
     [InlineData("petstore.yaml", "petstore.components.yaml")]
     public async Task Returns_NotNull(string apiFile, string componentsFile)
     {
-        OpenApiDocument result = await Arrange(apiFile, componentsFile);
+        var result = await Arrange(apiFile, componentsFile);
         result.Should().NotBeNull();
     }
 
@@ -68,6 +68,6 @@ public class OpenApiReaderTests
         await File.WriteAllTextAsync(componentsFilename, componentContents);
         await File.WriteAllTextAsync(openapiFilename, apiContents);
 
-        return await OpenApiMultiFileReader.Read(openapiFilename);
+        return (await OpenApiMultiFileReader.Read(openapiFilename)).OpenApiDocument;
     }
 }
