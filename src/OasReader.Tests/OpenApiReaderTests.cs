@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Xunit;
@@ -8,66 +7,67 @@ namespace OasReader.Tests;
 
 public class OpenApiReaderTests
 {
-    [Fact]
-    public async Task Returns_NotNull()
+    [Theory]
+    [InlineData("bot.yaml", "bot.components.yaml")]
+    [InlineData("petstore.yaml", "petstore.components.yaml")]
+    public async Task Returns_NotNull(string apiFile, string componentsFile)
     {
-        OpenApiDocument result = await Arrange();
+        OpenApiDocument result = await Arrange(apiFile, componentsFile);
         result.Should().NotBeNull();
     }
 
     [Theory]
-    [InlineData("BaseGuildID")]
-    [InlineData("BaseChannelID")]
-    [InlineData("BaseChannelCategoryID")]
-    [InlineData("BaseUserID")]
-    [InlineData("BaseRoleID")]
-    [InlineData("BaseMessageID")]
-    [InlineData("BaseSequenceInChannel")]
-    [InlineData("BaseScheduleID")]
-    [InlineData("Guild")]
-    [InlineData("User")]
-    [InlineData("Channel")]
-    [InlineData("Member")]
-    [InlineData("Role")]
-    [InlineData("ChannelPermissions")]
-    [InlineData("Message")]    
-    public async Task Returns_Document_With_External_Schemas(string schemaName)
+    [InlineData("bot.yaml", "bot.components.yaml")]
+    [InlineData("petstore.yaml", "petstore.components.yaml")]
+    public async Task Returns_Components_Schemas_NotNull(string apiFile, string componentsFile)
     {
-        OpenApiDocument result = await Arrange();
+        OpenApiDocument result = await Arrange(apiFile, componentsFile);
+        result.Components.Should().NotBeNull();
+        result.Components.Schemas.Should().NotBeNull();
+    }
+
+    [Theory]
+    [InlineData("bot.yaml", "bot.components.yaml", "BaseGuildID")]
+    [InlineData("bot.yaml", "bot.components.yaml", "BaseChannelID")]
+    [InlineData("bot.yaml", "bot.components.yaml", "BaseChannelCategoryID")]
+    [InlineData("bot.yaml", "bot.components.yaml", "BaseUserID")]
+    [InlineData("bot.yaml", "bot.components.yaml", "BaseRoleID")]
+    [InlineData("bot.yaml", "bot.components.yaml", "BaseMessageID")]
+    [InlineData("bot.yaml", "bot.components.yaml", "BaseSequenceInChannel")]
+    [InlineData("bot.yaml", "bot.components.yaml", "BaseScheduleID")]
+    [InlineData("bot.yaml", "bot.components.yaml", "Guild")]
+    [InlineData("bot.yaml", "bot.components.yaml", "User")]
+    [InlineData("bot.yaml", "bot.components.yaml", "Channel")]
+    [InlineData("bot.yaml", "bot.components.yaml", "Member")]
+    [InlineData("bot.yaml", "bot.components.yaml", "Role")]
+    [InlineData("bot.yaml", "bot.components.yaml", "ChannelPermissions")]
+    [InlineData("bot.yaml", "bot.components.yaml", "Message")]
+    [InlineData("petstore.yaml", "petstore.components.yaml", "Order")]
+    [InlineData("petstore.yaml", "petstore.components.yaml", "Pet")]
+    [InlineData("petstore.yaml", "petstore.components.yaml", "Tag")]
+    [InlineData("petstore.yaml", "petstore.components.yaml", "Category")]
+    [InlineData("petstore.yaml", "petstore.components.yaml", "ApiResponse")]
+    public async Task Returns_Document_With_External_Schemas(string apiFile, string componentsFile, string schemaName)
+    {
+        OpenApiDocument result = await Arrange(apiFile, componentsFile);
         result.Components.Schemas.Should().ContainKey(schemaName);
 
     }
 
-    private static async Task<OpenApiDocument> Arrange()
+    private static async Task<OpenApiDocument> Arrange(string apiFile, string componentsFile)
     {
         var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(folder);
 
-        var componentsFilename = Path.Combine(folder, "components.yaml");
-        var openapiFilename = Path.Combine(folder, "openapi.yaml");
+        var componentsFilename = Path.Combine(folder, componentsFile);
+        var openapiFilename = Path.Combine(folder, apiFile);
 
-        await File.WriteAllTextAsync(componentsFilename, EmbeddedResources.Components);
-        await File.WriteAllTextAsync(openapiFilename, EmbeddedResources.OpenApi);
+        var componentContents = EmbeddedResources.GetStream(componentsFile);
+        var apiContents = EmbeddedResources.GetStream(apiFile);
 
-        var result = await OpenApiMultiFileReader.Read(openapiFilename);
-        return result;
+        await File.WriteAllTextAsync(componentsFilename, componentContents);
+        await File.WriteAllTextAsync(openapiFilename, apiContents);
+
+        return await OpenApiMultiFileReader.Read(openapiFilename);
     }
-}
-
-internal class EmbeddedResources
-{
-    public static string GetStream(string name)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = $"OasReader.Tests.Resources.{name}";
-
-        using var stream = assembly.GetManifestResourceStream(resourceName);
-        using var reader = new StreamReader(stream ?? throw new InvalidOperationException($"Could not find the embedded resource {name}"));
-
-        return reader.ReadToEnd();
-    }
-
-    public static string OpenApi => GetStream("openapi.yaml");
-
-    public static string Components => GetStream("components.yaml");
 }
