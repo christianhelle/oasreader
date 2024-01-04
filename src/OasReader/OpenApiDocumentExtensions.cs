@@ -47,12 +47,12 @@ namespace Microsoft.OpenApi.Models
                 .Any(kvp => 
                     kvp.Value.Parameters.Any(
                         p => p.Reference?.IsExternal == true || 
-                        p.Schema.Reference?.IsExternal == true || 
+                        p.Schema?.Reference?.IsExternal == true || 
                         p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal == true)) ||
                     kvp.Value.Operations.Any(
                         o => o.Value.Parameters.Any(p => 
                             p.Reference?.IsExternal == true || 
-                            p.Schema.Reference?.IsExternal == true || 
+                            p.Schema?.Reference?.IsExternal == true || 
                             p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal == true)) ||
                         o.Value.RequestBody?.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal == true) == true ||
                         o.Value.Responses.Any(r => 
