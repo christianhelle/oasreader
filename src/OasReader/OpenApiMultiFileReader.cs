@@ -1,14 +1,12 @@
 ﻿using System.Net;
 using System.Security;
 using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
-using OasReader.Merger;
 
-namespace OasReader;
+namespace Microsoft.OpenApi.Readers;
 
-public static class OpenApiReader
+public static class OpenApiMultiFileReader
 {
-    public static async Task<OpenApiDocument> Load(string openApiFile, CancellationToken cancellationToken = default)
+    public static async Task<OpenApiDocument> Read(string openApiFile, CancellationToken cancellationToken = default)
     {
         var directoryName = new FileInfo(openApiFile).DirectoryName;
         var openApiReaderSettings = new OpenApiReaderSettings
@@ -18,24 +16,20 @@ public static class OpenApiReader
                 : new Uri($"file://{directoryName}{Path.DirectorySeparatorChar}")
         };
 
-        using var stream = await GetStream(openApiFile, cancellationToken);
+        using var stream = await GetStream(openApiFile);
         var streamReader = new OpenApiStreamReader(openApiReaderSettings);
         var result = await streamReader.ReadAsync(stream, cancellationToken);
         var document = result.OpenApiDocument;
 
-        if (document.Paths.Any(pair => pair.Value.Parameters.Any(parameter => parameter.Reference?.IsExternal == true)))
+        if (document.ContainsExternalReferences())
         {
-            var contents = OpenApiMerger.Merge(openApiFile, document, cancellationToken);
-            var reader = new OpenApiStringReader();
-            document = reader.Read(contents, out var diagnostic);
+            document = document.MergeExternalReferences(openApiFile);
         }
 
         return document ?? throw new InvalidOperationException($"Could not read the OpenAPI file at {openApiFile}");
     }
 
-    public static async Task<Stream> GetStream(
-        string input,
-        CancellationToken cancellationToken)
+    private static async Task<Stream> GetStream(string input)
     {
         if (input.StartsWith("http", StringComparison.OrdinalIgnoreCase))
         {

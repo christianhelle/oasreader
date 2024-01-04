@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FluentAssertions;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Readers;
 using Xunit;
 
 namespace OasReader.Tests;
@@ -48,7 +49,7 @@ public class OpenApiReaderTests
         await File.WriteAllTextAsync(componentsFilename, EmbeddedResources.Components);
         await File.WriteAllTextAsync(openapiFilename, EmbeddedResources.OpenApi);
 
-        var result = await OpenApiReader.Load(openapiFilename);
+        var result = await OpenApiMultiFileReader.Read(openapiFilename);
         return result;
     }
 }

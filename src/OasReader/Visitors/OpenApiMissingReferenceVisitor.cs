@@ -2,9 +2,9 @@
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Services;
 
-namespace OasReader.Merger.Visitors
+namespace OasReader.Visitors
 {
-    public class OpenApiMissingReferenceVisitor(
+    internal class OpenApiMissingReferenceVisitor(
         OpenApiDocument document,
         Dictionary<string, OpenApiDocument> documentCache)
         : OpenApiVisitorBase
