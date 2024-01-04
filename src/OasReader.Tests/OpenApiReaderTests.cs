@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿using System.Reflection;
 using FluentAssertions;
 using Microsoft.OpenApi.Models;
-using OasReader.OAS;
 using Xunit;
 
 namespace OasReader.Tests;

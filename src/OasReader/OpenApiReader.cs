@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using OasReader.Merger;
 
-namespace OasReader.OAS;
+namespace OasReader;
 
 public static class OpenApiReader
 {
