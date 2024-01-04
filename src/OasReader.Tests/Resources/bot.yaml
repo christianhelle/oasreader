@@ -19,7 +19,7 @@ security:
 paths:
   /guilds/{guild_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
     get:
       summary: 获取频道详情
       description: 用于获取 guild_id 指定的频道的详情
@@ -31,7 +31,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Guild'
+                $ref: 'bot.components.yaml#/components/schemas/Guild'
       tags:
         - GuildManagements
   /users/@me:
@@ -46,7 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/User'
+                $ref: 'bot.components.yaml#/components/schemas/User'
       tags:
         - UserRelations
   /users/@me/guilds:
@@ -84,12 +84,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/Guild'
+                  $ref: 'bot.components.yaml#/components/schemas/Guild'
       tags:
         - UserRelations
   /guilds/{guild_id}/channels:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
     get:
       summary: 获取子频道列表
       description: 用于获取 guild_id 指定的频道下的子频道列表
@@ -103,7 +103,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/Channel'
+                  $ref: 'bot.components.yaml#/components/schemas/Channel'
       tags:
         - GuildManagements
     post:
@@ -121,7 +121,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'components.yaml#/components/schemas/ChannelCreate'
+              $ref: 'bot.components.yaml#/components/schemas/ChannelCreate'
       responses:
         200:
           description: 成功
@@ -130,12 +130,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/Channel'
+                  $ref: 'bot.components.yaml#/components/schemas/Channel'
       tags:
         - GuildManagements
   /channels/{channel_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
     get:
       summary: 获取子频道详情
       description: 用于获取 channel_id 指定的子频道的详情
@@ -147,7 +147,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Channel'
+                $ref: 'bot.components.yaml#/components/schemas/Channel'
       tags:
         - GuildManagements
     patch:
@@ -165,14 +165,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'components.yaml#/components/schemas/ChannelUpdate'
+              $ref: 'bot.components.yaml#/components/schemas/ChannelUpdate'
       responses:
         200:
           description: 成功
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Channel'
+                $ref: 'bot.components.yaml#/components/schemas/Channel'
       tags:
         - GuildManagements
     delete:
@@ -200,7 +200,7 @@ paths:
       externalDocs:
         url: https://bot.q.qq.com/wiki/develop/api/openapi/member/get_members.html
       parameters:
-        - $ref: 'components.yaml#/components/parameters/PathGuildID'
+        - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
         - name: after
           in: query
           required: false
@@ -222,13 +222,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/Member'
+                  $ref: 'bot.components.yaml#/components/schemas/Member'
       tags:
         - UserRelations
   /guilds/{guild_id}/members/{user_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
-      - $ref: 'components.yaml#/components/parameters/PathUserID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathUserID'
     get:
       summary: 获取成员详情
       description: 用于获取 guild_id 指定的频道中 user_id 对应成员的详细信息
@@ -240,7 +240,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Member'
+                $ref: 'bot.components.yaml#/components/schemas/Member'
       tags:
         - UserRelations
     delete:
@@ -270,7 +270,7 @@ paths:
         - UserRelations
   /guilds/{guild_id}/roles:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
     get:
       summary: 获取频道身份组列表
       description: 用于获取 guild_id指定的频道下的身份组列表
@@ -290,7 +290,7 @@ paths:
                   roles:
                     type: array
                     items:
-                      $ref: 'components.yaml#/components/schemas/Role'
+                      $ref: 'bot.components.yaml#/components/schemas/Role'
                     description: 频道身份组对象列表
                   role_num_limit:
                     type: string
@@ -333,13 +333,13 @@ paths:
                     type: string
                     description: 频道身份组 ID
                   role:
-                    $ref: 'components.yaml#/components/schemas/GuildRole'
+                    $ref: 'bot.components.yaml#/components/schemas/GuildRole'
       tags: [UserRelations]
 
   /guilds/{guild_id}/roles/{role_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
-      - $ref: 'components.yaml#/components/parameters/PathRoleID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathRoleID'
     patch:
       summary: 修改频道身份组
       description: |
@@ -378,7 +378,7 @@ paths:
                     type: string
                     description: 频道身份组 ID
                   role:
-                    $ref: 'components.yaml#/components/schemas/GuildRole'
+                    $ref: 'bot.components.yaml#/components/schemas/GuildRole'
       tags: [UserRelations]
     delete:
       summary: 删除频道身份组
@@ -394,9 +394,9 @@ paths:
 
   /guilds/{guild_id}/members/{user_id}/roles/{role_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
-      - $ref: 'components.yaml#/components/parameters/PathRoleID'
-      - $ref: 'components.yaml#/components/parameters/PathUserID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathRoleID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathUserID'
     put:
       summary: 创建频道身份组成员
       description: |
@@ -442,8 +442,8 @@ paths:
 
   /channels/{channel_id}/members/{user_id}/permissions:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
-      - $ref: 'components.yaml#/components/parameters/PathUserID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathUserID'
     get:
       summary: 获取子频道用户权限
       description: |
@@ -458,7 +458,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/ChannelPermissions'
+                $ref: 'bot.components.yaml#/components/schemas/ChannelPermissions'
       tags:
         - Permissions
     put:
@@ -489,8 +489,8 @@ paths:
         - Permissions
   /channels/{channel_id}/roles/{role_id}/permissions:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
-      - $ref: 'components.yaml#/components/parameters/PathRoleID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathRoleID'
     get:
       summary: 获取子频道身份组权限
       description: |
@@ -504,7 +504,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/ChannelPermissions'
+                $ref: 'bot.components.yaml#/components/schemas/ChannelPermissions'
       tags:
         - Permissions
     put:
@@ -535,8 +535,8 @@ paths:
         - Permissions
   /channels/{channel_id}/messages/{message_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
-      - $ref: 'components.yaml#/components/parameters/PathMessageID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathMessageID'
     get:
       summary: 获取指定消息
       description: 用于获取子频道 channel_id 下的消息 message_id 的详情。
@@ -548,12 +548,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Message'
+                $ref: 'bot.components.yaml#/components/schemas/Message'
       tags:
         - Messages
   /channels/{channel_id}/messages:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
     post:
       summary: 发送消息
       description: |
@@ -572,14 +572,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'components.yaml#/components/schemas/MessageSend'
+              $ref: 'bot.components.yaml#/components/schemas/MessageSend'
       responses:
         200:
           description: 成功
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Message'
+                $ref: 'bot.components.yaml#/components/schemas/Message'
       tags:
         - Messages
   /users/@me/dms:
@@ -614,12 +614,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/DMS'
+                  $ref: 'bot.components.yaml#/components/schemas/DMS'
       tags:
         - Messages
   /dms/{guild_id}/messages:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
     post:
       summary: 发送私信
       description: |
@@ -635,7 +635,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'components.yaml#/components/schemas/MessageSend'
+              $ref: 'bot.components.yaml#/components/schemas/MessageSend'
       responses:
         200:
           description: 成功
@@ -644,12 +644,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/Message'
+                  $ref: 'bot.components.yaml#/components/schemas/Message'
       tags:
         - Messages
   /guilds/{guild_id}/mute:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
     patch:
       summary: 禁言全员
       description: |
@@ -679,8 +679,8 @@ paths:
         - Permissions
   /guilds/{guild_id}/members/{user_id}/mute:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
-      - $ref: 'components.yaml#/components/parameters/PathUserID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathUserID'
     patch:
       summary: 禁言指定成员
       description: |
@@ -709,7 +709,7 @@ paths:
         - Permissions
   /guilds/{guild_id}/announces:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
     post:
       summary: 创建频道公告
       description: |
@@ -737,12 +737,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Announces'
+                $ref: 'bot.components.yaml#/components/schemas/Announces'
       tags: [GuildManagements]
   /guilds/{guild_id}/announces/{message_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
-      - $ref: 'components.yaml#/components/parameters/PathMessageID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathMessageID'
     delete:
       summary: 删除频道公告
       description: |
@@ -756,7 +756,7 @@ paths:
       tags: [GuildManagements]
   /channels/{channel_id}/announces:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
     post:
       summary: 创建子频道公告
       description: 用于将子频道 channel_id 内的某条消息设置为子频道公告。
@@ -780,13 +780,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Announces'
+                $ref: 'bot.components.yaml#/components/schemas/Announces'
       tags: [GuildManagements]
 
   /channels/{channel_id}/announces/{message_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
-      - $ref: 'components.yaml#/components/parameters/PathMessageID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathMessageID'
     delete:
       summary: 删除子频道公告
       description: |
@@ -802,7 +802,7 @@ paths:
 
   /channels/{channel_id}/schedules:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
     get:
       summary: 获取频道日程列表
       description: |
@@ -827,7 +827,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/Schedule'
+                  $ref: 'bot.components.yaml#/components/schemas/Schedule'
       tags:
         - Applications
     post:
@@ -844,20 +844,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'components.yaml#/components/schemas/ScheduleCreate' 
+              $ref: 'bot.components.yaml#/components/schemas/ScheduleCreate' 
       responses:
         200:
           description: 成功
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Schedule'
+                $ref: 'bot.components.yaml#/components/schemas/Schedule'
       tags:
         - Applications
   /channels/{channel_id}/schedules/{schedule_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
-      - $ref: 'components.yaml#/components/parameters/PathScheduleID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathScheduleID'
     get:
       summary: 获取日程详情
       description: 获取日程子频道 channel_id 下 schedule_id 指定的的日程的详情。
@@ -869,7 +869,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Schedule'
+                $ref: 'bot.components.yaml#/components/schemas/Schedule'
       tags:
         - Applications
     patch:
@@ -884,14 +884,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'components.yaml#/components/schemas/ScheduleUpdate'
+              $ref: 'bot.components.yaml#/components/schemas/ScheduleUpdate'
       responses:
         200:
           description: 成功
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/Schedule'
+                $ref: 'bot.components.yaml#/components/schemas/Schedule'
       tags:
         - Applications
     delete:
@@ -908,7 +908,7 @@ paths:
         - Applications
   /channels/{channel_id}/audio:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
     post:
       summary: 音频控制
       description: |
@@ -921,7 +921,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'components.yaml#/components/schemas/AudioControl'
+              $ref: 'bot.components.yaml#/components/schemas/AudioControl'
       responses:
         200:
           description: 成功
@@ -929,7 +929,7 @@ paths:
         - Audio
   /guilds/{guild_id}/api_permission:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
     get:
       summary: 获取频道可用权限列表
       description: |
@@ -944,12 +944,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/APIPermission'
+                  $ref: 'bot.components.yaml#/components/schemas/APIPermission'
       tags:
         - BotAPI
   /guilds/{guild_id}/api_permission/demand:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathGuildID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathGuildID'
     post:
       summary: 创建频道 API 接口权限授权链接
       description: |
@@ -967,7 +967,7 @@ paths:
                   type: string
                   description: 授权链接发送的子频道 id
                 api_identify:
-                  $ref: 'components.yaml#/components/schemas/APIPermissionDemandIdentify'
+                  $ref: 'bot.components.yaml#/components/schemas/APIPermissionDemandIdentify'
                 desc:
                   type: string
                   description: 机器人申请对应的 API 接口权限后可以使用功能的描述
@@ -979,7 +979,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'components.yaml#/components/schemas/APIPermissionDemand'
+                  $ref: 'bot.components.yaml#/components/schemas/APIPermissionDemand'
       tags:
         - BotAPI
   /gateway:
@@ -1025,24 +1025,24 @@ paths:
                     type: integer
                     description: 建议的 shard 数
                   session_start_limit:
-                    $ref: 'components.yaml#/components/schemas/SessionStartLimit'
+                    $ref: 'bot.components.yaml#/components/schemas/SessionStartLimit'
       tags:
         - BotAPI
   /channels/{channel_id}/messages/{message_id}/reactions/{type}/{id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
-      - $ref: 'components.yaml#/components/parameters/PathMessageID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathMessageID'
       - name: type
         in: path
         required: true
         schema:
-          $ref: 'components.yaml#/components/schemas/EmojiType'
+          $ref: 'bot.components.yaml#/components/schemas/EmojiType'
         description: 表情类型
       - name: id
         in: path
         required: true
         schema:
-          $ref: 'components.yaml#/components/schemas/EmojiID'
+          $ref: 'bot.components.yaml#/components/schemas/EmojiID'
         description: 表情ID
     put:
       tags:
@@ -1064,8 +1064,8 @@ paths:
           description: 成功
   /channels/{channel_id}/pins/{message_id}:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
-      - $ref: 'components.yaml#/components/parameters/PathMessageID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathMessageID'
     put:
       tags:
         - Messages
@@ -1078,7 +1078,7 @@ paths:
           content:
             applicztion/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/PinsMessage'
+                $ref: 'bot.components.yaml#/components/schemas/PinsMessage'
     delete:
       tags:
         - Messages
@@ -1090,7 +1090,7 @@ paths:
           description: 成功
   /channels/{channel_id}/pins:
     parameters:
-      - $ref: 'components.yaml#/components/parameters/PathChannelID'
+      - $ref: 'bot.components.yaml#/components/parameters/PathChannelID'
     get:
       tags: [Messages]
       summary: 获取精华消息列表
@@ -1102,7 +1102,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'components.yaml#/components/schemas/PinsMessage'
+                $ref: 'bot.components.yaml#/components/schemas/PinsMessage'
 
 
 #================
