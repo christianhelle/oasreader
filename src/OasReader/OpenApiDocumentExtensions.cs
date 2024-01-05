@@ -44,19 +44,19 @@ namespace Microsoft.OpenApi.Models
 
         public static bool ContainsExternalReferences(this OpenApiDocument document) =>
             document.Paths
-                .Any(kvp => 
-                    kvp.Value.Parameters.Any(
-                        p => p.Reference?.IsExternal == true || 
-                        p.Schema?.Reference?.IsExternal == true || 
-                        p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal == true)) ||
-                    kvp.Value.Operations.Any(
-                        o => o.Value.Parameters.Any(p => 
-                            p.Reference?.IsExternal == true || 
-                            p.Schema?.Reference?.IsExternal == true || 
-                            p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal == true)) ||
+                ?.Any(kvp =>
+                    kvp.Value.Parameters?.Any(
+                        p => p.Reference?.IsExternal == true ||
+                        p.Schema?.Reference?.IsExternal == true ||
+                        p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal == true)) == true ||
+                    kvp.Value.Operations?.Any(
+                        o => o.Value.Parameters.Any(p =>
+                            p.Reference?.IsExternal == true ||
+                            p.Schema?.Reference?.IsExternal == true ||
+                            p.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal == true) == true) ||
                         o.Value.RequestBody?.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal == true) == true ||
-                        o.Value.Responses.Any(r => 
-                            r.Value.Content.Any(c => c.Value.Schema?.Reference?.IsExternal == true) ||
-                            r.Value.Headers.Any(h => h.Value.Schema?.Reference?.IsExternal == true))));
+                        o.Value.Responses?.Any(r =>
+                            r.Value.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal == true) == true ||
+                            r.Value.Headers?.Any(h => h.Value.Schema?.Reference?.IsExternal == true) == true) == true) == true) == true;
     }
 }
