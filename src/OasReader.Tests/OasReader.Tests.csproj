@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\*.yaml" />
+    <EmbeddedResource Include="Resources\**\*" />
   </ItemGroup>
 
   <ItemGroup>  
