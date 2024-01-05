@@ -10,7 +10,7 @@ public class OpenApiDocumentExtensionsTests
     [Theory]
     [InlineData("bot.yaml", "bot.components.yaml")]
     [InlineData("petstore.yaml", "petstore.components.yaml")]
-    public async Task Returns_NotNull(string apiFile, string componentsFile)
+    public async Task ContainsExternalReferences_BeTrue(string apiFile, string componentsFile)
     {
         var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(folder);
