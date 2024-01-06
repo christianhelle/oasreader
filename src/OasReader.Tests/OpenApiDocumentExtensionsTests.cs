@@ -63,6 +63,7 @@ public class OpenApiDocumentExtensionsTests
     [InlineData("v3.petstore.json")]
     [InlineData("v3.uspto.yaml")]
     [InlineData("v3.uspto.json")]
+    [InlineData("v3.no-content.yaml")]
     public async Task ContainsExternalReferences_BeFalse(string apiFile)
     {
         var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));

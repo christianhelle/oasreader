@@ -45,12 +45,14 @@ namespace Microsoft.OpenApi.Models
         public static bool ContainsExternalReferences(this OpenApiDocument document) =>
             document.Paths
                 ?.Any(kvp =>
-                    kvp.Value.Parameters?.Any(
-                        p => p.Reference?.IsExternal == true ||
-                        p.Schema?.Reference?.IsExternal == true ||
-                        p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal == true)) == true ||
-                    kvp.Value.Operations?.Any(
-                        o => o.Value.Parameters.Any(p =>
+                    kvp.Value.Parameters
+                        .Where(p => p is not null)
+                        .Any(p => 
+                            p.Reference?.IsExternal == true ||
+                            p.Schema?.Reference?.IsExternal == true ||
+                            p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal == true)) == true ||
+                    kvp.Value.Operations?.Any(o => 
+                        o.Value.Parameters.Any(p =>
                             p.Reference?.IsExternal == true ||
                             p.Schema?.Reference?.IsExternal == true ||
                             p.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal == true) == true) ||
