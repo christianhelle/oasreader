@@ -81,4 +81,13 @@ public class OpenApiDocumentExtensionsTests
 
         sut.ContainsExternalReferences().Should().BeFalse();
     }
+    
+    [Theory]
+    [InlineData("https://developers.intellihr.io/docs/v1/swagger.json")] // GZIP encoded
+    [InlineData("http://raw.githubusercontent.com/christianhelle/refitter/main/test/OpenAPI/v3.0/petstore.json")]
+    public async Task ContainsExternalReferences_BeFalse_WhenUrl(string url)
+    {
+        var sut = await OpenApiMultiFileReader.Read(url);
+        sut.OpenApiDocument.ContainsExternalReferences().Should().BeFalse();
+    }
 }
