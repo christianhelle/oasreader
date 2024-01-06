@@ -6,7 +6,7 @@ namespace Microsoft.OpenApi.Readers;
 
 public static class OpenApiMultiFileReader
 {
-    public static async Task<ReadResult> Read(string openApiFile, CancellationToken cancellationToken = default)
+    public static async Task<Result> Read(string openApiFile, CancellationToken cancellationToken = default)
     {
         var directoryName = new FileInfo(openApiFile).DirectoryName;
         var openApiReaderSettings = new OpenApiReaderSettings
@@ -21,16 +21,14 @@ public static class OpenApiMultiFileReader
         var result = await streamReader.ReadAsync(stream, cancellationToken);
         var document = result.OpenApiDocument;
 
+        bool containedExternalReferences = false;
         if (result.OpenApiDocument.ContainsExternalReferences())
         {
+            containedExternalReferences = true;
             document = document.MergeExternalReferences(openApiFile);
         }
 
-        return new ReadResult
-        {
-            OpenApiDiagnostic = result.OpenApiDiagnostic,
-            OpenApiDocument = document ?? throw new InvalidOperationException($"Could not read the OpenAPI file at {openApiFile}")
-        };
+        return new Result(result.OpenApiDiagnostic, document, containedExternalReferences);
     }
 
     private static async Task<Stream> GetStream(string input)
@@ -70,4 +68,21 @@ public static class OpenApiMultiFileReader
             throw new InvalidOperationException($"Could not open the file at {input}", ex);
         }
     }
+}
+
+public class Result
+{
+    public Result(
+        OpenApiDiagnostic openApiDiagnostic, 
+        OpenApiDocument openApiDocument,
+        bool containedExternalReferences)
+    {
+        OpenApiDiagnostic = openApiDiagnostic;
+        OpenApiDocument = openApiDocument;
+        ContainedExternalReferences = containedExternalReferences;
+    }
+
+    public OpenApiDiagnostic OpenApiDiagnostic { get; }
+    public OpenApiDocument OpenApiDocument { get; }
+    public bool ContainedExternalReferences { get; }
 }
