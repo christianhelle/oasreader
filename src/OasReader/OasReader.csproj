@@ -17,7 +17,7 @@
     <Description>An OpenAPI reader that merges external references into a single document for .NET using the [Microsoft OpenAPI](https://www.nuget.org/packages/Microsoft.OpenApi.readers) toolset</Description>
     <Authors>Christian Resma Helle</Authors>
     <Company>Christian Resma Helle</Company>
-    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/christianhelle/oasreader</PackageProjectUrl>
     <RepositoryUrl>https://github.com/christianhelle/oasreader</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
