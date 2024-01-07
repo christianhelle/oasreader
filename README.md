@@ -5,7 +5,9 @@
 
 # OpenAPI Multi Document Reader for .NET
 
-An OpenAPI reader that merges external references into a single document using the [Microsoft OpenAPI](https://www.nuget.org/packages/Microsoft.OpenApi.readers) toolset
+An OpenAPI reader that merges external references into a single document using the [Microsoft OpenAPI](https://www.nuget.org/packages/Microsoft.OpenApi.readers) toolset. 
+
+This is based on the work done by Jan Kokenberg and contains [source code](https://dev.azure.com/janbaarssen/Open%20API%20Generator/_git/OpenApi.Merger) from the [dotnet-openapi-merger](https://www.nuget.org/packages/dotnet-openapi-merger) CLI tool
 
 ## Usage
 
