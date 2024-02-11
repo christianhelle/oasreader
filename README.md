@@ -3,7 +3,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=christianhelle_oasreader&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=christianhelle_oasreader)
 [![codecov](https://codecov.io/gh/christianhelle/oasreader/graph/badge.svg?token=242YT1N6T2)](https://codecov.io/gh/christianhelle/oasreader)
 
-# OpenAPI Multi Document Reader for .NET
+# Multi Document Reader for OpenAPI.NET
 
 An OpenAPI reader that merges external references into a single document using the [Microsoft OpenAPI](https://www.nuget.org/packages/Microsoft.OpenApi.readers) toolset. 
 
