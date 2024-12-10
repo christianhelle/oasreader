@@ -1,19 +1,24 @@
 ﻿using System.Net;
 using System.Security;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Validations;
 
 namespace Microsoft.OpenApi.Readers;
 
 public static class OpenApiMultiFileReader
 {
-    public static async Task<Result> Read(string openApiFile, CancellationToken cancellationToken = default)
+    public static async Task<Result> Read(
+        string openApiFile,
+        ValidationRuleSet? validationRuleSet = default,
+        CancellationToken cancellationToken = default)
     {
         var directoryName = new FileInfo(openApiFile).DirectoryName;
         var openApiReaderSettings = new OpenApiReaderSettings
         {
             BaseUrl = openApiFile.StartsWith("http", StringComparison.OrdinalIgnoreCase)
                 ? new Uri(openApiFile)
-                : new Uri($"file://{directoryName}{Path.DirectorySeparatorChar}")
+                : new Uri($"file://{directoryName}{Path.DirectorySeparatorChar}"),
+            RuleSet = validationRuleSet ?? ValidationRuleSet.GetEmptyRuleSet(),
         };
 
         using var stream = await GetStream(openApiFile);
@@ -73,7 +78,7 @@ public static class OpenApiMultiFileReader
 public class Result
 {
     public Result(
-        OpenApiDiagnostic openApiDiagnostic, 
+        OpenApiDiagnostic openApiDiagnostic,
         OpenApiDocument openApiDocument,
         bool containedExternalReferences)
     {
