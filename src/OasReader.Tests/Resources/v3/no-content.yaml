@@ -5,8 +5,8 @@ info:
 paths:
   '/orders/{orderId}/order-items/{orderItemId}':
     parameters:
-      - $ref: '#/parameters/OrderId'
-      - $ref: '#/parameters/OrderItemId'
+      - $ref: '#/components/parameters/OrderId'
+      - $ref: '#/components/parameters/OrderItemId'
     delete:
       summary: Delete an order item
       description: >-
@@ -17,26 +17,26 @@ paths:
           description: No Content.
         default:
           description: Default response
-          schema:
-            $ref: '#/definitions/Error'
-definitions:
-  Error:
-    type: object
-    properties:
-      message:
-          type: string
-parameters:
-  OrderId:
-    name: orderId
-    in: path
-    description: Identifier of the order.
-    required: true
-    type: string
-    format: uuid
-  OrderItemId:
-    name: orderItemId
-    in: path
-    description: Identifier of the order item.
-    required: true
-    type: string
-    format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            
+components:
+  schemas:      
+    Error:
+      type: object
+      properties:
+        message:
+            type: string
+  parameters:
+    OrderId:
+      name: orderId
+      in: path
+      description: Identifier of the order.
+      required: true
+    OrderItemId:
+      name: orderItemId
+      in: path
+      description: Identifier of the order item.
+      required: true
