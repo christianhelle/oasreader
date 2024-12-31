@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/christianhelle/oasreader/tree/HEAD)
 
-[Full Changelog](https://github.com/christianhelle/oasreader/compare/1.6.16.15...HEAD)
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/1.6.16.16...HEAD)
+
+**Merged pull requests:**
+
+- Update dependency coverlet.collector to 6.0.3 [\#76](https://github.com/christianhelle/oasreader/pull/76) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [1.6.16.16](https://github.com/christianhelle/oasreader/tree/1.6.16.16) (2024-12-10)
+
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/1.6.16.15...1.6.16.16)
 
 **Implemented enhancements:**
 
