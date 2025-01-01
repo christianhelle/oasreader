@@ -8,6 +8,7 @@
 
 - Update dependency coverlet.collector to 6.0.3 [\#76](https://github.com/christianhelle/oasreader/pull/76) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency Microsoft.OpenApi.Readers to 1.6.23 [\#74](https://github.com/christianhelle/oasreader/pull/74) ([renovate[bot]](https://github.com/apps/renovate))
+- Bump xunit.runner.visualstudio from 2.8.2 to 3.0.0 [\#73](https://github.com/christianhelle/oasreader/pull/73) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [1.6.16.16](https://github.com/christianhelle/oasreader/tree/1.6.16.16) (2024-12-10)
 
