@@ -6,6 +6,7 @@
 
 **Merged pull requests:**
 
+- Update xunit-dotnet monorepo [\#78](https://github.com/christianhelle/oasreader/pull/78) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency Atc.Test to 1.1.9 [\#77](https://github.com/christianhelle/oasreader/pull/77) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency coverlet.collector to 6.0.3 [\#76](https://github.com/christianhelle/oasreader/pull/76) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency Microsoft.OpenApi.Readers to 1.6.23 [\#74](https://github.com/christianhelle/oasreader/pull/74) ([renovate[bot]](https://github.com/apps/renovate))
