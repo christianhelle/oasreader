@@ -6,6 +6,7 @@
 
 **Merged pull requests:**
 
+- Bump coverlet.collector from 6.0.3 to 6.0.4 [\#83](https://github.com/christianhelle/oasreader/pull/83) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update xunit-dotnet monorepo [\#78](https://github.com/christianhelle/oasreader/pull/78) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency Atc.Test to 1.1.9 [\#77](https://github.com/christianhelle/oasreader/pull/77) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency coverlet.collector to 6.0.3 [\#76](https://github.com/christianhelle/oasreader/pull/76) ([renovate[bot]](https://github.com/apps/renovate))
