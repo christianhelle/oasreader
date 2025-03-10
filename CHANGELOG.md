@@ -7,6 +7,7 @@
 **Merged pull requests:**
 
 - Bump Atc.Test from 1.1.9 to 1.1.18 [\#89](https://github.com/christianhelle/oasreader/pull/89) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump xunit.runner.visualstudio from 3.0.1 to 3.0.2 [\#86](https://github.com/christianhelle/oasreader/pull/86) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverlet.collector from 6.0.3 to 6.0.4 [\#83](https://github.com/christianhelle/oasreader/pull/83) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update xunit-dotnet monorepo [\#78](https://github.com/christianhelle/oasreader/pull/78) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency Atc.Test to 1.1.9 [\#77](https://github.com/christianhelle/oasreader/pull/77) ([renovate[bot]](https://github.com/apps/renovate))
