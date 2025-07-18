@@ -6,6 +6,7 @@
 
 **Merged pull requests:**
 
+- Bump xunit.runner.visualstudio from 3.1.1 to 3.1.3 [\#102](https://github.com/christianhelle/oasreader/pull/102) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.NET.Test.Sdk and xunit.runner.visualstudio [\#99](https://github.com/christianhelle/oasreader/pull/99) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update mcr.microsoft.com/devcontainers/universal Docker tag to v3 [\#95](https://github.com/christianhelle/oasreader/pull/95) ([renovate[bot]](https://github.com/apps/renovate))
 - Update Microsoft.NET.Test.Sdk to 17.14.0 [\#94](https://github.com/christianhelle/oasreader/pull/94) ([dependabot[bot]](https://github.com/apps/dependabot))
