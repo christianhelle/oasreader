@@ -27,7 +27,7 @@ jobs:
     steps:
     
     - name: 🛒 Checkout repository
-      uses: actions/checkout@v4    
+      uses: actions/checkout@v5    
     
     - name: 🧪 Test
       run: dotnet test src/OasReader.Tests/OasReader.Tests.csproj -c Release --collect "Code coverage" -p:UseSourceLink=true
