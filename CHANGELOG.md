@@ -4,8 +4,14 @@
 
 [Full Changelog](https://github.com/christianhelle/oasreader/compare/1.6.16.16...HEAD)
 
+**Closed issues:**
+
+- Setup CoPilot Instructions [\#103](https://github.com/christianhelle/oasreader/issues/103)
+
 **Merged pull requests:**
 
+- Update actions/checkout action to v5 [\#105](https://github.com/christianhelle/oasreader/pull/105) ([renovate[bot]](https://github.com/apps/renovate))
+- Add comprehensive GitHub Copilot instructions for OasReader development [\#104](https://github.com/christianhelle/oasreader/pull/104) ([Copilot](https://github.com/apps/copilot-swe-agent))
 - Bump xunit.runner.visualstudio from 3.1.1 to 3.1.3 [\#102](https://github.com/christianhelle/oasreader/pull/102) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.NET.Test.Sdk and xunit.runner.visualstudio [\#99](https://github.com/christianhelle/oasreader/pull/99) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update mcr.microsoft.com/devcontainers/universal Docker tag to v3 [\#95](https://github.com/christianhelle/oasreader/pull/95) ([renovate[bot]](https://github.com/apps/renovate))
