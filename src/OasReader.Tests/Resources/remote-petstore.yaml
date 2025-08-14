@@ -1,0 +1,26 @@
+openapi: 3.0.3
+info:
+  title: Sample Pet Store App
+  version: 1.0.0
+paths:
+  /pet:
+    post:
+      tags:
+      - pet
+      summary: Add a new pet to the store
+      description: Add a new pet to the store
+      operationId: addPet
+      requestBody:
+        description: Create a new pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: 'https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/petstore.components.yaml#/components/schemas/Pet'          
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/petstore.components.yaml#/components/schemas/Pet'
