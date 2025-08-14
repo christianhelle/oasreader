@@ -54,69 +54,12 @@ public class OpenApiReaderTests
 
     }
 
-    [Fact]
-    public async Task Returns_Document_With_Remote_External_Schemas()
+    [Theory]
+    [InlineData("https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/remote-petstore.yaml")]
+    [InlineData("https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/relative-remote-petstore.yaml")]
+    public async Task Returns_Document_With_Remote_Relative_External_References(string remoteOpenApiUrl)
     {
-        var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(folder);
-
-        var openapiFilename = Path.Combine(folder, "remote-petstore.yaml");
-        
-        // Debug: Check if the embedded resource exists and what it contains
-        try
-        {
-            var apiContents = EmbeddedResources.GetStream("remote-petstore.yaml");
-            Console.WriteLine($"Resource content length: {apiContents?.Length ?? 0}");
-            Console.WriteLine($"First 100 chars: {apiContents?.Substring(0, Math.Min(100, apiContents?.Length ?? 0))}");
-            
-            if (string.IsNullOrWhiteSpace(apiContents))
-            {
-                throw new InvalidOperationException("Embedded resource is empty or null");
-            }
-            
-            await File.WriteAllTextAsync(openapiFilename, apiContents);
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Error reading embedded resource: {ex.Message}", ex);
-        }
-
-        var result = await OpenApiMultiFileReader.Read(openapiFilename);
-
-        result.Should().NotBeNull();
-        result.OpenApiDocument.Should().NotBeNull();
-        result.ContainedExternalReferences.Should().BeTrue();
-        result.OpenApiDocument.Components.Should().NotBeNull();
-        result.OpenApiDocument.Components.Schemas.Should().NotBeNull();
-        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Pet");
-        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Category");
-        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Tag");
-    }
-
-    [Fact]
-    public async Task Returns_Document_With_Fully_Remote_External_References()
-    {
-        const string remoteOpenApiUrl = "https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/remote-petstore.yaml";
-
         var result = await OpenApiMultiFileReader.Read(remoteOpenApiUrl);
-
-        result.Should().NotBeNull();
-        result.OpenApiDocument.Should().NotBeNull();
-        result.ContainedExternalReferences.Should().BeTrue();
-        result.OpenApiDocument.Components.Should().NotBeNull();
-        result.OpenApiDocument.Components.Schemas.Should().NotBeNull();
-        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Pet");
-        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Category");
-        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Tag");
-    }
-
-    [Fact]
-    public async Task Returns_Document_With_Remote_Relative_External_References()
-    {
-        const string remoteOpenApiUrl = "https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/relative-remote-petstore.yaml";
-
-        var result = await OpenApiMultiFileReader.Read(remoteOpenApiUrl);
-
         result.Should().NotBeNull();
         result.OpenApiDocument.Should().NotBeNull();
         result.ContainedExternalReferences.Should().BeTrue();
