@@ -55,11 +55,13 @@ public class OpenApiReaderTests
     }
 
     [Theory]
+    [Trait("Category", "Integration")]
     [InlineData("https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/remote-petstore.yaml")]
     [InlineData("https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/relative-remote-petstore.yaml")]
     public async Task Returns_Document_With_Remote_External_Schemas(string remoteOpenApiUrl)
     {
-        var result = await OpenApiMultiFileReader.Read(remoteOpenApiUrl);
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        var result = await OpenApiMultiFileReader.Read(remoteOpenApiUrl, cancellationToken: cts.Token);
         result.Should().NotBeNull();
         result.OpenApiDocument.Should().NotBeNull();
         result.ContainedExternalReferences.Should().BeTrue();
