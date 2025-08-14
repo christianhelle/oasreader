@@ -11,14 +11,23 @@ This is based on the work done by Jan Kokenberg and contains [source code](https
 
 ## Usage
 
-The class `OpenApiMultiFileReader` is used to load an OpenAPI specifications document file locally or remotely using a YAML or JSON file. `OpenApiMultiFileReader` will automatically merge external references if the OAS file uses them. Merging external referenecs that the file is in the same folder as the main OAS file. When loading OAS files remotely, the external references must also be remote files. Currently, you can not load a remote OAS file that has external references to local files. 
+The class `OpenApiMultiFileReader` is used to load an OpenAPI specifications document file locally or remotely using a YAML or JSON file. `OpenApiMultiFileReader` will automatically merge external references if the OAS file uses them.
+
+**Local Files**: External references must be in the same folder as the main OAS file or in subdirectories.
+
+**Remote Files**: When loading OAS files remotely, external references can be:
+
+- Absolute URLs: `https://example.com/components.yaml#/components/schemas/Pet`
+- Relative URLs: `components.yaml#/components/schemas/Pet` (resolved relative to the main file's URL)
 
 ```csharp
 ReadResult result = await OpenApiMultiFileReader.Read("petstore.yaml");
 OpenApiDocument document = result.OpenApiDocument;
 ```
 
-In the example above, we have OpenAPI specifications that are split into multiple documents. **`petstore.yaml`** contains the **`paths`** and **`petstore.components.yaml`** contain the **`components/schemas`**
+### Example with Local External References
+
+In the example below, we have OpenAPI specifications that are split into multiple documents. **`petstore.yaml`** contains the **`paths`** and **`petstore.components.yaml`** contain the **`components/schemas`**
 
 **`petstore.yaml`**
 
@@ -46,6 +55,50 @@ paths:
             application/json:
               schema:
                 $ref: 'petstore.components.yaml#/components/schemas/Pet'
+```
+
+### Example with Remote External References
+
+You can also use remote external references with absolute URLs:
+
+```yaml
+openapi: 3.0.3
+paths:
+  /pet:
+    post:
+      tags:
+      - pet
+      summary: Add a new pet to the store
+      description: Add a new pet to the store
+      operationId: addPet
+      requestBody:
+        description: Create a new pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: 'https://raw.githubusercontent.com/example/repo/main/components.yaml#/components/schemas/Pet'          
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/example/repo/main/components.yaml#/components/schemas/Pet'
+```
+
+Or with relative URLs when the main file is also remote:
+
+```yaml
+openapi: 3.0.3
+paths:
+  /pet:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/components/schemas/Pet'  # Resolved relative to main file's URL
 ```
 
 **`petstore.components.yaml`**
