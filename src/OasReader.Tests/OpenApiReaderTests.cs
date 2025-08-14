@@ -57,7 +57,7 @@ public class OpenApiReaderTests
     [Theory]
     [InlineData("https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/remote-petstore.yaml")]
     [InlineData("https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/relative-remote-petstore.yaml")]
-    public async Task Returns_Document_With_Remote_Relative_External_References(string remoteOpenApiUrl)
+    public async Task Returns_Document_With_Remote_External_Schemas(string remoteOpenApiUrl)
     {
         var result = await OpenApiMultiFileReader.Read(remoteOpenApiUrl);
         result.Should().NotBeNull();
