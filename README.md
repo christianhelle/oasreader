@@ -76,7 +76,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'https://raw.githubusercontent.com/example/repo/main/components.yaml#/components/schemas/Pet'          
+              $ref: 'https://example.com/openapi/components.yaml#/components/schemas/Pet'          
         required: true
       responses:
         "200":
@@ -84,7 +84,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://raw.githubusercontent.com/example/repo/main/components.yaml#/components/schemas/Pet'
+                $ref: 'https://example.com/openapi/components.yaml#/components/schemas/Pet'
 ```
 
 Or with relative URLs when the main file is also remote:
