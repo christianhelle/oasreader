@@ -6,7 +6,7 @@ using Xunit;
 
 namespace OasReader.Tests;
 
-public class OpenApiDocumentExtensionsTests 
+public class OpenApiDocumentExtensionsTests
 {
     [Theory]
     [InlineData("bot.yaml", "bot.components.yaml")]
@@ -24,16 +24,16 @@ public class OpenApiDocumentExtensionsTests
 
         await File.WriteAllTextAsync(componentsFilename, componentContents);
         await File.WriteAllTextAsync(openapiFilename, apiContents);
-        
+
         var file = File.OpenRead(openapiFilename);
         var textReader = new StreamReader(file);
         var reader = new OpenApiTextReaderReader();
-        var result = await reader.ReadAsync(textReader, CancellationToken.None);        
+        var result = await reader.ReadAsync(textReader, CancellationToken.None);
         OpenApiDocument sut = result.OpenApiDocument;
 
         sut.ContainsExternalReferences().Should().BeTrue();
     }
-    
+
     [Theory]
     [InlineData("v2.api-with-examples.yaml")]
     [InlineData("v2.petstore-expanded.yaml")]
@@ -73,16 +73,16 @@ public class OpenApiDocumentExtensionsTests
         var openapiFilename = Path.Combine(folder, apiFile);
         var apiContents = EmbeddedResources.GetStream(apiFile);
         await File.WriteAllTextAsync(openapiFilename, apiContents);
-        
+
         var file = File.OpenRead(openapiFilename);
         var textReader = new StreamReader(file);
         var reader = new OpenApiTextReaderReader();
-        var result = await reader.ReadAsync(textReader, CancellationToken.None);        
+        var result = await reader.ReadAsync(textReader, CancellationToken.None);
         OpenApiDocument sut = result.OpenApiDocument;
 
         sut.ContainsExternalReferences().Should().BeFalse();
     }
-    
+
     [Theory]
     [InlineData("https://developers.intellihr.io/docs/v1/swagger.json")] // GZIP encoded
     [InlineData("http://raw.githubusercontent.com/christianhelle/refitter/main/test/OpenAPI/v3.0/petstore.json")]
@@ -91,7 +91,7 @@ public class OpenApiDocumentExtensionsTests
         var sut = await OpenApiMultiFileReader.Read(url);
         sut.OpenApiDocument.ContainsExternalReferences().Should().BeFalse();
     }
-    
+
     [Theory]
     [InlineData("v3.ingram-micro.json")]
     [InlineData("v3.weather.json")]
@@ -103,12 +103,12 @@ public class OpenApiDocumentExtensionsTests
         var openapiFilename = Path.Combine(folder, apiFile);
         var apiContents = EmbeddedResources.GetStream(apiFile);
         await File.WriteAllTextAsync(openapiFilename, apiContents);
-        
+
         var result = await OpenApiMultiFileReader.Read(openapiFilename, ValidationRuleSet.GetDefaultRuleSet());
 
         result.OpenApiDiagnostic.Errors.Should().NotBeEmpty();
     }
-    
+
     [Theory]
     [InlineData("v2.api-with-examples.yaml")]
     [InlineData("v2.petstore-expanded.yaml")]
@@ -149,7 +149,7 @@ public class OpenApiDocumentExtensionsTests
         var openapiFilename = Path.Combine(folder, apiFile);
         var apiContents = EmbeddedResources.GetStream(apiFile);
         await File.WriteAllTextAsync(openapiFilename, apiContents);
-        
+
         var result = await OpenApiMultiFileReader.Read(openapiFilename, ValidationRuleSet.GetEmptyRuleSet());
 
         result.OpenApiDiagnostic.Errors.Should().BeEmpty();

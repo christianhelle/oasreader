@@ -10,7 +10,8 @@ namespace OasReader.Visitors
         private readonly Dictionary<string, OpenApiDocument> documentCache;
         private static readonly Lazy<HttpClient> HttpClient = new();
         private readonly List<FileInfo> files;
-        
+        private readonly string openApiFile;
+
         internal ReferenceCache Cache { get; } = new();
 
         public OpenApiReferenceResolverVisitor(
@@ -18,12 +19,28 @@ namespace OasReader.Visitors
             Dictionary<string, OpenApiDocument> documentCache)
         {
             this.documentCache = documentCache;
+            this.openApiFile = openApiFile;
 
-            files = Directory
-                .GetFiles(Path.GetDirectoryName(openApiFile)!, $"*{Path.GetExtension(openApiFile)}", SearchOption.AllDirectories)
-                .Select(f => new FileInfo(f))
-                .Where(f => f.Exists)
-                .ToList();
+            if (!openApiFile.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                var directoryName = Path.GetDirectoryName(openApiFile);
+                if (!string.IsNullOrEmpty(directoryName))
+                {
+                    files = Directory
+                        .GetFiles(directoryName, $"*{Path.GetExtension(openApiFile)}", SearchOption.AllDirectories)
+                        .Select(f => new FileInfo(f))
+                        .Where(f => f.Exists)
+                        .ToList();
+                }
+                else
+                {
+                    files = new List<FileInfo>();
+                }
+            }
+            else
+            {
+                files = new List<FileInfo>();
+            }
         }
 
         public override void Visit(IOpenApiReferenceable referenceable)
@@ -86,9 +103,32 @@ namespace OasReader.Visitors
 
             if (reference.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
-                return GetDocumentFromStream(
-                    reference,
-                    HttpClient.Value.GetStreamAsync(new Uri(reference)).GetAwaiter().GetResult());
+                try
+                {
+                    return GetDocumentFromStream(
+                        reference,
+                        HttpClient.Value.GetStreamAsync(new Uri(reference)).GetAwaiter().GetResult());
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+            if (openApiFile.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    var baseUri = new Uri(openApiFile);
+                    var absoluteUri = new Uri(baseUri, reference);
+                    return GetDocumentFromStream(
+                        absoluteUri.ToString(),
+                        HttpClient.Value.GetStreamAsync(absoluteUri).GetAwaiter().GetResult());
+                }
+                catch
+                {
+                    return null;
+                }
             }
 
             var file = files.FirstOrDefault(

@@ -54,6 +54,24 @@ public class OpenApiReaderTests
 
     }
 
+    [Theory]
+    [Trait("Category", "Integration")]
+    [InlineData("https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/remote-petstore.yaml")]
+    [InlineData("https://raw.githubusercontent.com/christianhelle/oasreader/refs/heads/main/src/OasReader.Tests/Resources/relative-remote-petstore.yaml")]
+    public async Task Returns_Document_With_Remote_External_Schemas(string remoteOpenApiUrl)
+    {
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        var result = await OpenApiMultiFileReader.Read(remoteOpenApiUrl, cancellationToken: cts.Token);
+        result.Should().NotBeNull();
+        result.OpenApiDocument.Should().NotBeNull();
+        result.ContainedExternalReferences.Should().BeTrue();
+        result.OpenApiDocument.Components.Should().NotBeNull();
+        result.OpenApiDocument.Components.Schemas.Should().NotBeNull();
+        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Pet");
+        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Category");
+        result.OpenApiDocument.Components.Schemas.Should().ContainKey("Tag");
+    }
+
     private static async Task<OpenApiDocument> Arrange(string apiFile, string componentsFile)
     {
         var folder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));

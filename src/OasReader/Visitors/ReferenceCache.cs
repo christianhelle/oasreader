@@ -27,6 +27,8 @@ internal class ReferenceCache
 
     public void UpdateDocument(OpenApiDocument document)
     {
+        document.Components ??= new OpenApiComponents();
+
         foreach (var kvp in data)
         {
             switch (kvp.Key)
