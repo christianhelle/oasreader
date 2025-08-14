@@ -4,6 +4,10 @@
 
 [Full Changelog](https://github.com/christianhelle/oasreader/compare/1.6.16.16...HEAD)
 
+**Implemented enhancements:**
+
+- Add support for remote external references [\#106](https://github.com/christianhelle/oasreader/pull/106) ([christianhelle](https://github.com/christianhelle))
+
 **Closed issues:**
 
 - Setup CoPilot Instructions [\#103](https://github.com/christianhelle/oasreader/issues/103)
