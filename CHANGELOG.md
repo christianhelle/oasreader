@@ -14,6 +14,7 @@
 
 **Merged pull requests:**
 
+- Bump Microsoft.OpenApi.Readers from 1.6.24 to 1.6.25 [\#110](https://github.com/christianhelle/oasreader/pull/110) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump xunit.runner.visualstudio from 3.1.3 to 3.1.4 [\#108](https://github.com/christianhelle/oasreader/pull/108) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update actions/checkout action to v5 [\#105](https://github.com/christianhelle/oasreader/pull/105) ([renovate[bot]](https://github.com/apps/renovate))
 - Add comprehensive GitHub Copilot instructions for OasReader development [\#104](https://github.com/christianhelle/oasreader/pull/104) ([Copilot](https://github.com/apps/copilot-swe-agent))
