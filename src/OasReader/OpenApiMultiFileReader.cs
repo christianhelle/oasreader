@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Security;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Validations;
 
@@ -22,7 +23,7 @@ public static class OpenApiMultiFileReader
         };
 
         using var stream = await GetStream(openApiFile);
-        var streamReader = new OpenApiStreamReader(openApiReaderSettings);
+        var streamReader = new OpenApiJsonReader(openApiReaderSettings);
         var result = await streamReader.ReadAsync(stream, cancellationToken);
         var document = result.OpenApiDocument;
 
@@ -78,7 +79,7 @@ public static class OpenApiMultiFileReader
 public class Result
 {
     public Result(
-        OpenApiDiagnostic openApiDiagnostic,
+        Microsoft.OpenApi.Reader.OpenApiDiagnostic openApiDiagnostic,
         OpenApiDocument openApiDocument,
         bool containedExternalReferences)
     {
@@ -87,7 +88,7 @@ public class Result
         ContainedExternalReferences = containedExternalReferences;
     }
 
-    public OpenApiDiagnostic OpenApiDiagnostic { get; }
+    public Microsoft.OpenApi.Reader.OpenApiDiagnostic OpenApiDiagnostic { get; }
     public OpenApiDocument OpenApiDocument { get; }
     public bool ContainedExternalReferences { get; }
 }

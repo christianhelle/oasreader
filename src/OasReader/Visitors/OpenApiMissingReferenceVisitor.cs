@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Microsoft.OpenApi.Services;
 
 namespace OasReader.Visitors
@@ -11,10 +12,10 @@ namespace OasReader.Visitors
     {
         internal ReferenceCache Cache { get; } = new();
 
-        public override void Visit(IOpenApiReferenceable referenceable)
+        public override void Visit(IOpenApiSchema schema)
         {
-            if (referenceable is not OpenApiSchema ||
-                document.Components.Schemas.ContainsKey(referenceable.Reference.Id))
+            if (schema is not OpenApiSchema openApiSchema ||
+                document.Components.Schemas.ContainsKey(openApiSchema.Reference?.Id ?? ""))
             {
                 return;
             }
@@ -23,9 +24,9 @@ namespace OasReader.Visitors
             {
                 try
                 {
-                    if (kvp.Value.ResolveReference(referenceable.Reference) is OpenApiSchema schema)
+                    if (kvp.Value.ResolveReference(openApiSchema.Reference) is OpenApiSchema resolvedSchema)
                     {
-                        Cache.Add(schema);
+                        Cache.Add(resolvedSchema);
                     }
                 }
                 catch

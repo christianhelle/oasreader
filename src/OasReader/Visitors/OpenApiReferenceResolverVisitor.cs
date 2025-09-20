@@ -43,10 +43,10 @@ namespace OasReader.Visitors
             }
         }
 
-        public override void Visit(IOpenApiReferenceable referenceable)
+        public override void Visit(IOpenApiReferenceHolder referenceHolder)
         {
-            if (!(referenceable.Reference?.IsExternal ?? false) ||
-                !TryLoadDocument(referenceable, out var externalDocument) ||
+            if (!(referenceHolder.Reference?.IsExternal ?? false) ||
+                !TryLoadDocument(referenceHolder, out var externalDocument) ||
                 externalDocument == null)
             {
                 return;
@@ -54,8 +54,8 @@ namespace OasReader.Visitors
 
             var localReference = new OpenApiReference
             {
-                Id = referenceable.Reference!.Id.Split('/').Last(),
-                Type = referenceable.Reference.Type ?? ReferenceType.Schema
+                Id = referenceHolder.Reference!.Id.Split('/').Last(),
+                Type = referenceHolder.Reference.Type ?? ReferenceType.Schema
             };
 
             if (externalDocument.ResolveReference(localReference) is { } reference)
@@ -63,14 +63,14 @@ namespace OasReader.Visitors
                 Cache.Add(reference);
             }
 
-            referenceable.Reference = localReference;
+            referenceHolder.Reference = localReference;
         }
 
-        private bool TryLoadDocument(IOpenApiReferenceable referenceable, out OpenApiDocument? document)
+        private bool TryLoadDocument(IOpenApiReferenceHolder referenceHolder, out OpenApiDocument? document)
         {
             document = null;
-            var reference = referenceable.Reference?.IsExternal ?? false
-                ? referenceable.Reference.ExternalResource
+            var reference = referenceHolder.Reference?.IsExternal ?? false
+                ? referenceHolder.Reference.ExternalResource
                 : null;
             if (reference == null)
             {
