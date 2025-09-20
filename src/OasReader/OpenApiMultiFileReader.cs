@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System.Security;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Reader;
 using Microsoft.OpenApi.Validations;
 
 namespace Microsoft.OpenApi.Readers;
@@ -24,18 +22,18 @@ public static class OpenApiMultiFileReader
         };
 
         using var stream = await GetStream(openApiFile);
-        var streamReader = new OpenApiJsonReader();
-        var result = await streamReader.ReadAsync(stream, openApiReaderSettings, cancellationToken);
-        var document = result.Document;
+        var streamReader = new OpenApiStreamReader(openApiReaderSettings);
+        var result = await streamReader.ReadAsync(stream, cancellationToken);
+        var document = result.OpenApiDocument;
 
         bool containedExternalReferences = false;
-        if (result.Document.ContainsExternalReferences())
+        if (result.OpenApiDocument.ContainsExternalReferences())
         {
             containedExternalReferences = true;
             document = document.MergeExternalReferences(openApiFile);
         }
 
-        return new Result(result.Diagnostic, document, containedExternalReferences);
+        return new Result(result.OpenApiDiagnostic, document, containedExternalReferences);
     }
 
     private static async Task<Stream> GetStream(string input)
@@ -80,7 +78,7 @@ public static class OpenApiMultiFileReader
 public class Result
 {
     public Result(
-        Microsoft.OpenApi.Reader.OpenApiDiagnostic openApiDiagnostic,
+        OpenApiDiagnostic openApiDiagnostic,
         OpenApiDocument openApiDocument,
         bool containedExternalReferences)
     {
@@ -89,7 +87,7 @@ public class Result
         ContainedExternalReferences = containedExternalReferences;
     }
 
-    public Microsoft.OpenApi.Reader.OpenApiDiagnostic OpenApiDiagnostic { get; }
+    public OpenApiDiagnostic OpenApiDiagnostic { get; }
     public OpenApiDocument OpenApiDocument { get; }
     public bool ContainedExternalReferences { get; }
 }
