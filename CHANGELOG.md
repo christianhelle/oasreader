@@ -14,6 +14,7 @@
 
 **Merged pull requests:**
 
+- Bump Microsoft.OpenApi.Readers from 1.6.27 to 1.6.28 [\#124](https://github.com/christianhelle/oasreader/pull/124) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.OpenApi.Readers from 1.6.26 to 1.6.27 [\#123](https://github.com/christianhelle/oasreader/pull/123) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.NET.Test.Sdk from 17.14.1 to 18.0.0 [\#122](https://github.com/christianhelle/oasreader/pull/122) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump xunit.runner.visualstudio from 3.1.4 to 3.1.5 [\#120](https://github.com/christianhelle/oasreader/pull/120) ([dependabot[bot]](https://github.com/apps/dependabot))
