@@ -157,6 +157,10 @@ components:
         name: category
 ```
 
+## Publishing
+
+This package is published to NuGet using [Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing), which uses OpenID Connect (OIDC) tokens from GitHub Actions instead of long-lived API keys. This provides enhanced security by eliminating the need to store sensitive credentials.
+
 #
 
 For tips and tricks on software development, check out [my blog](https://christianhelle.com)
