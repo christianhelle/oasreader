@@ -14,6 +14,9 @@ jobs:
   publish:
     name: 🚚 Prepare new release
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
     steps:
       - uses: actions/checkout@v5
       - name: Sets environment variables - branch-name
@@ -35,7 +38,7 @@ jobs:
             **/*.nupkg
             README.md
       - name: Push packages to NuGet
-        run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_KEY }} --source ${{ env.NUGET_REPO_URL }} --no-symbols
+        run: dotnet nuget push **/*.nupkg --source ${{ env.NUGET_REPO_URL }} --no-symbols
       - name: Create tag
         uses: actions/github-script@v8
         with:
