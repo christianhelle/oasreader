@@ -5,9 +5,9 @@ This repository uses [NuGet Trusted Publishing](https://learn.microsoft.com/en-u
 ## How It Works
 
 1. When the release workflow runs, GitHub Actions generates a short-lived OIDC token
-2. The `dotnet nuget push` command automatically uses this token
+2. The `NuGet/login@v1` action uses this OIDC token to authenticate with NuGet.org
 3. NuGet.org validates the token and issues a temporary API key (valid for ~1 hour)
-4. The package is published using the temporary key
+4. The temporary API key is used in the `dotnet nuget push` command to publish the package
 
 ## Configuration Required on NuGet.org
 
@@ -24,7 +24,7 @@ The repository owner must configure a Trusted Publishing policy on NuGet.org:
 
 ## Workflow Configuration
 
-The release workflow (`release.yml`) includes the required permissions:
+The release workflow (`release.yml`) includes the required permissions and the NuGet login action:
 
 ```yaml
 permissions:
@@ -32,11 +32,15 @@ permissions:
   contents: write  # Required for creating tags
 ```
 
-The push command no longer requires an API key:
+The workflow uses the `NuGet/login@v1` action to obtain a temporary API key:
 
 ```yaml
+- name: NuGet Login
+  uses: NuGet/login@v1
+  id: nuget-login
+
 - name: Push packages to NuGet
-  run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --no-symbols
+  run: dotnet nuget push **/*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --no-symbols
 ```
 
 ## Benefits
