@@ -6,14 +6,19 @@
 
 **Implemented enhancements:**
 
+- Migrate NuGet publishing in release workflows to Trusted Publishing [\#127](https://github.com/christianhelle/oasreader/issues/127)
+- Migrate NuGet publishing in release workflows to Trusted Publishing [\#125](https://github.com/christianhelle/oasreader/issues/125)
 - Add support for remote external references [\#106](https://github.com/christianhelle/oasreader/pull/106) ([christianhelle](https://github.com/christianhelle))
 
 **Closed issues:**
 
+- Migrate NuGet publishing in release workflows to Trusted Publishing [\#129](https://github.com/christianhelle/oasreader/issues/129)
 - Setup CoPilot Instructions [\#103](https://github.com/christianhelle/oasreader/issues/103)
 
 **Merged pull requests:**
 
+- Update actions/checkout action to v6 [\#135](https://github.com/christianhelle/oasreader/pull/135) ([renovate[bot]](https://github.com/apps/renovate))
+- Update actions/upload-artifact action to v5 [\#132](https://github.com/christianhelle/oasreader/pull/132) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency ruby to v3.4.7 [\#131](https://github.com/christianhelle/oasreader/pull/131) ([renovate[bot]](https://github.com/apps/renovate))
 - Bump Microsoft.OpenApi.Readers from 1.6.27 to 1.6.28 [\#124](https://github.com/christianhelle/oasreader/pull/124) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.OpenApi.Readers from 1.6.26 to 1.6.27 [\#123](https://github.com/christianhelle/oasreader/pull/123) ([dependabot[bot]](https://github.com/apps/dependabot))
