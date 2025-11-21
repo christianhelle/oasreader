@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: 🛒 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: 🧪 Test
         run: dotnet test src/OasReader.Tests/OasReader.Tests.csproj -c Release --collect "XPlat Code coverage" -p:UseSourceLink=true

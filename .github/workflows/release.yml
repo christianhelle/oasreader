@@ -18,7 +18,7 @@ jobs:
       id-token: write
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Sets environment variables - branch-name
         uses: nelonoel/branch-name@v1.0.1
       - name: Sets environment variables - Nerdbank.GitVersioning
