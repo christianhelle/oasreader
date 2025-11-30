@@ -35,9 +35,12 @@ namespace Microsoft.OpenApi.Models
             }
             while (missingCount > 0);
 
-            document.Components.Schemas = document.Components.Schemas
-                .OrderBy(kvp => kvp.Key)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            if (document.Components?.Schemas != null)
+            {
+                document.Components.Schemas = document.Components.Schemas
+                    .OrderBy(kvp => kvp.Key)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             return document;
         }
