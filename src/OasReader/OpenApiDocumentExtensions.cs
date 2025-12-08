@@ -35,9 +35,12 @@ namespace Microsoft.OpenApi.Models
             }
             while (missingCount > 0);
 
-            document.Components.Schemas = document.Components.Schemas
-                .OrderBy(kvp => kvp.Key)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            if (document.Components?.Schemas != null)
+            {
+                document.Components.Schemas = document.Components.Schemas
+                    .OrderBy(kvp => kvp.Key)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             return document;
         }
@@ -51,8 +54,8 @@ namespace Microsoft.OpenApi.Models
                             p.Reference?.IsExternal is true ||
                             p.Schema?.Reference?.IsExternal is true ||
                             p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal is true)) is true ||
-                    kvp.Value.Operations?.Any(o => 
-                        o.Value.Parameters                        
+                    kvp.Value.Operations?.Any(o =>
+                        o.Value.Parameters
                             .Where(p => p is not null)
                             .Any(p =>
                                 p.Reference?.IsExternal is true ||

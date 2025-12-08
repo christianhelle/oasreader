@@ -11,6 +11,11 @@ internal class ReferenceCache
 
     public void Add(IOpenApiReferenceable referenceable)
     {
+        if (referenceable.Reference?.Id == null)
+        {
+            return;
+        }
+
         var type = referenceable.Reference.Type ?? ReferenceType.Schema;
         if (!data.ContainsKey(type))
         {

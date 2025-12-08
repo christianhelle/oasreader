@@ -7,6 +7,10 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>  
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="OasReader.Tests" />
+  </ItemGroup>
+
   <PropertyGroup Label="Nuget">
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <Title>OasReader</Title>
