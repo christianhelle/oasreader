@@ -15,7 +15,7 @@ namespace OasReader.Visitors
         {
             if (referenceable is not OpenApiSchema ||
                 referenceable.Reference?.Id == null ||
-                document.Components?.Schemas?.ContainsKey(referenceable.Reference.Id) == true)
+                document.Components?.Schemas?.ContainsKey(referenceable.Reference!.Id) == true)
             {
                 return;
             }
