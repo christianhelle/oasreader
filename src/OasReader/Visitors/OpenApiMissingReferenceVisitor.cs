@@ -14,7 +14,8 @@ namespace OasReader.Visitors
         public override void Visit(IOpenApiReferenceable referenceable)
         {
             if (referenceable is not OpenApiSchema ||
-                document.Components.Schemas.ContainsKey(referenceable.Reference.Id))
+                referenceable.Reference?.Id is null ||
+                document.Components?.Schemas?.ContainsKey(referenceable.Reference.Id) is true)
             {
                 return;
             }

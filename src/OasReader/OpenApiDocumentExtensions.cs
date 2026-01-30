@@ -35,9 +35,12 @@ namespace Microsoft.OpenApi.Models
             }
             while (missingCount > 0);
 
-            document.Components.Schemas = document.Components.Schemas
-                .OrderBy(kvp => kvp.Key)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            if (document.Components?.Schemas is not null)
+            {
+                document.Components.Schemas = document.Components.Schemas
+                    .OrderBy(kvp => kvp.Key)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             return document;
         }
@@ -45,19 +48,19 @@ namespace Microsoft.OpenApi.Models
         public static bool ContainsExternalReferences(this OpenApiDocument document) =>
             document.Paths
                 ?.Any(kvp =>
-                    kvp.Value.Parameters
+                    kvp.Value.Parameters?
                         .Where(p => p is not null)
                         .Any(p =>
                             p.Reference?.IsExternal is true ||
                             p.Schema?.Reference?.IsExternal is true ||
-                            p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal is true)) is true ||
-                    kvp.Value.Operations?.Any(o => 
-                        o.Value.Parameters                        
+                            p.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal is true) is true) is true ||
+                    kvp.Value.Operations?.Any(o =>
+                        o.Value.Parameters?
                             .Where(p => p is not null)
                             .Any(p =>
                                 p.Reference?.IsExternal is true ||
                                 p.Schema?.Reference?.IsExternal is true ||
-                                p.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal is true) is true) ||
+                                p.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal is true) is true) is true ||
                         o.Value.RequestBody?.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal is true) is true ||
                         o.Value.Responses?.Any(r =>
                             r.Value?.Content?.Any(c => c.Value?.Schema?.Reference?.IsExternal is true) is true ||

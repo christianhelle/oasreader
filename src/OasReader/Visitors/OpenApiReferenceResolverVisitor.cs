@@ -105,9 +105,8 @@ namespace OasReader.Visitors
             {
                 try
                 {
-                    return GetDocumentFromStream(
-                        reference,
-                        HttpClient.Value.GetStreamAsync(new Uri(reference)).GetAwaiter().GetResult());
+                    using var stream = HttpClient.Value.GetStreamAsync(new Uri(reference)).GetAwaiter().GetResult();
+                    return GetDocumentFromStream(reference, stream);
                 }
                 catch
                 {
@@ -121,9 +120,8 @@ namespace OasReader.Visitors
                 {
                     var baseUri = new Uri(openApiFile);
                     var absoluteUri = new Uri(baseUri, reference);
-                    return GetDocumentFromStream(
-                        absoluteUri.ToString(),
-                        HttpClient.Value.GetStreamAsync(absoluteUri).GetAwaiter().GetResult());
+                    using var stream = HttpClient.Value.GetStreamAsync(absoluteUri).GetAwaiter().GetResult();
+                    return GetDocumentFromStream(absoluteUri.ToString(), stream);
                 }
                 catch
                 {

@@ -12,7 +12,7 @@ public static class OpenApiMultiFileReader
         ValidationRuleSet? validationRuleSet = default,
         CancellationToken cancellationToken = default)
     {
-        var directoryName = new FileInfo(openApiFile).DirectoryName;
+        var directoryName = new FileInfo(openApiFile).DirectoryName ?? Directory.GetCurrentDirectory();
         var openApiReaderSettings = new OpenApiReaderSettings
         {
             BaseUrl = openApiFile.StartsWith("http", StringComparison.OrdinalIgnoreCase)
