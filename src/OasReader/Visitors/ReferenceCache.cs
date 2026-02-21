@@ -1,5 +1,4 @@
-﻿using Microsoft.OpenApi.Interfaces;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace OasReader.Visitors;
 
@@ -9,20 +8,19 @@ internal class ReferenceCache
 
     public int Count => data.Sum(x => x.Value.Count);
 
-    public void Add(IOpenApiReferenceable referenceable)
+    public void Add(ReferenceType type, string id, IOpenApiReferenceable referenceable)
     {
-        var type = referenceable.Reference.Type ?? ReferenceType.Schema;
         if (!data.ContainsKey(type))
         {
             data[type] = new Dictionary<string, IOpenApiReferenceable>();
         }
 
-        if (data[type].TryGetValue(referenceable.Reference.Id, out _))
+        if (data[type].TryGetValue(id, out _))
         {
             return;
         }
 
-        data[type][referenceable.Reference.Id] = referenceable;
+        data[type][id] = referenceable;
     }
 
     public void UpdateDocument(OpenApiDocument document)
@@ -34,33 +32,43 @@ internal class ReferenceCache
             switch (kvp.Key)
             {
                 case ReferenceType.Schema:
+                    document.Components.Schemas ??= new Dictionary<string, IOpenApiSchema>();
                     Update(document.Components.Schemas, kvp.Value);
                     break;
                 case ReferenceType.Response:
+                    document.Components.Responses ??= new Dictionary<string, IOpenApiResponse>();
                     Update(document.Components.Responses, kvp.Value);
                     break;
                 case ReferenceType.Parameter:
+                    document.Components.Parameters ??= new Dictionary<string, IOpenApiParameter>();
                     Update(document.Components.Parameters, kvp.Value);
                     break;
                 case ReferenceType.Example:
+                    document.Components.Examples ??= new Dictionary<string, IOpenApiExample>();
                     Update(document.Components.Examples, kvp.Value);
                     break;
                 case ReferenceType.RequestBody:
+                    document.Components.RequestBodies ??= new Dictionary<string, IOpenApiRequestBody>();
                     Update(document.Components.RequestBodies, kvp.Value);
                     break;
                 case ReferenceType.Header:
+                    document.Components.Headers ??= new Dictionary<string, IOpenApiHeader>();
                     Update(document.Components.Headers, kvp.Value);
                     break;
                 case ReferenceType.SecurityScheme:
+                    document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
                     Update(document.Components.SecuritySchemes, kvp.Value);
                     break;
                 case ReferenceType.Link:
+                    document.Components.Links ??= new Dictionary<string, IOpenApiLink>();
                     Update(document.Components.Links, kvp.Value);
                     break;
                 case ReferenceType.Callback:
+                    document.Components.Callbacks ??= new Dictionary<string, IOpenApiCallback>();
                     Update(document.Components.Callbacks, kvp.Value);
                     break;
                 case ReferenceType.Tag:
+                    document.Tags ??= new HashSet<OpenApiTag>();
                     Update(document.Tags, kvp.Value);
                     break;
                 default:

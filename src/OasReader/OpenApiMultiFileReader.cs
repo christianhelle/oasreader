@@ -1,9 +1,9 @@
-﻿using System.Net;
+using System.Net;
 using System.Security;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Validations;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Reader;
 
-namespace Microsoft.OpenApi.Readers;
+namespace Microsoft.OpenApi.Reader;
 
 public static class OpenApiMultiFileReader
 {
@@ -18,22 +18,31 @@ public static class OpenApiMultiFileReader
             BaseUrl = openApiFile.StartsWith("http", StringComparison.OrdinalIgnoreCase)
                 ? new Uri(openApiFile)
                 : new Uri($"file://{directoryName}{Path.DirectorySeparatorChar}"),
-            RuleSet = validationRuleSet ?? ValidationRuleSet.GetEmptyRuleSet(),
         };
 
+        if (validationRuleSet != null)
+        {
+            openApiReaderSettings.RuleSet = validationRuleSet;
+        }
+        else
+        {
+            openApiReaderSettings.RuleSet = ValidationRuleSet.GetEmptyRuleSet();
+        }
+
+        openApiReaderSettings.AddYamlReader();
+
         using var stream = await GetStream(openApiFile);
-        var streamReader = new OpenApiStreamReader(openApiReaderSettings);
-        var result = await streamReader.ReadAsync(stream, cancellationToken);
-        var document = result.OpenApiDocument;
+        var result = await OpenApiDocument.LoadAsync(stream, settings: openApiReaderSettings, cancellationToken: cancellationToken);
+        var document = result.Document;
 
         bool containedExternalReferences = false;
-        if (result.OpenApiDocument.ContainsExternalReferences())
+        if (result.Document.ContainsExternalReferences())
         {
             containedExternalReferences = true;
             document = document.MergeExternalReferences(openApiFile);
         }
 
-        return new Result(result.OpenApiDiagnostic, document, containedExternalReferences);
+        return new Result(result.Diagnostic, document, containedExternalReferences);
     }
 
     private static async Task<Stream> GetStream(string input)
