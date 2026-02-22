@@ -63,11 +63,11 @@ namespace OasReader.Visitors
 
             var type = reference.Type;
 
-            var resolved = ComponentResolver.ResolveFromDocument(externalDocument, type, id);
+            var resolved = ComponentResolver.ResolveFromDocument(externalDocument, type, id!);
             if (resolved != null)
             {
-                Cache.Add(type, id, resolved);
-                referenceHolder.SetLocalReference(id, type);
+                Cache.Add(type, id!, resolved);
+                referenceHolder.SetLocalReference(id!, type);
             }
         }
 

@@ -26,7 +26,7 @@ namespace OasReader.Visitors
             }
 
             // Check if already exists in the main document
-            if (ComponentResolver.ExistsInDocument(document, type, id))
+            if (ComponentResolver.ExistsInDocument(document, type, id!))
             {
                 return;
             }
@@ -36,10 +36,10 @@ namespace OasReader.Visitors
             {
                 try
                 {
-                    var resolved = ComponentResolver.ResolveFromDocument(kvp.Value, type, id);
+                    var resolved = ComponentResolver.ResolveFromDocument(kvp.Value, type, id!);
                     if (resolved != null)
                     {
-                        Cache.Add(type, id, resolved);
+                        Cache.Add(type, id!, resolved);
                     }
                 }
                 catch

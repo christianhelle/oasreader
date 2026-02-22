@@ -26,11 +26,12 @@ public static class OpenApiMultiFileReader
 
         using var stream = await GetStream(openApiFile);
         var result = await OpenApiDocument.LoadAsync(stream, settings: openApiReaderSettings, cancellationToken: cancellationToken);
+        var diagnostic = result.Diagnostic ?? new OpenApiDiagnostic();
         var document = result.Document;
 
         if (document == null)
         {
-            return new Result(result.Diagnostic, document!, containedExternalReferences: false);
+            return new Result(diagnostic, document!, containedExternalReferences: false);
         }
 
         bool containedExternalReferences = false;
@@ -40,7 +41,7 @@ public static class OpenApiMultiFileReader
             document = document.MergeExternalReferences(openApiFile);
         }
 
-        return new Result(result.Diagnostic, document, containedExternalReferences);
+        return new Result(diagnostic, document, containedExternalReferences);
     }
 
     private static async Task<Stream> GetStream(string input)
