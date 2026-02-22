@@ -34,9 +34,12 @@ namespace Microsoft.OpenApi
             while (missingCount > 0);
 
             document.Components ??= new OpenApiComponents();
-            document.Components.Schemas = document.Components.Schemas
-                .OrderBy(kvp => kvp.Key)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            if (document.Components.Schemas != null)
+            {
+                document.Components.Schemas = document.Components.Schemas
+                    .OrderBy(kvp => kvp.Key)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             return document;
         }
@@ -78,27 +81,17 @@ namespace Microsoft.OpenApi
 
         internal static void SetLocalReference(this IOpenApiReferenceHolder holder, string id, ReferenceType type)
         {
-            // All concrete reference types (OpenApiSchemaReference, OpenApiParameterReference, etc.)
-            // share the same constructor signature: (string referenceId, OpenApiDocument hostDocument, string externalResource)
-            // For a local reference, externalResource should be null.
-            var holderType = holder.GetType();
-            var ctor = holderType.GetConstructor(new[] { typeof(string), typeof(OpenApiDocument), typeof(string) });
-            if (ctor != null)
+            var baseRef = holder.GetBaseReference();
+            if (baseRef == null)
             {
-                var hostDocument = holder.GetBaseReference()?.HostDocument;
-                var newRef = ctor.Invoke(new object?[] { id, hostDocument, null });
-
-                // Replace the holder's reference property with a local one
-                var refProp = holderType.GetProperty("Reference");
-                if (refProp != null)
-                {
-                    var currentRef = refProp.GetValue(newRef);
-                    if (currentRef is BaseOpenApiReference)
-                    {
-                        refProp.SetValue(holder, currentRef);
-                    }
-                }
+                return;
             }
+
+            // BaseOpenApiReference properties are init-only, so we must use reflection to set them
+            var baseRefType = typeof(BaseOpenApiReference);
+            baseRefType.GetProperty(nameof(BaseOpenApiReference.Id))?.SetValue(baseRef, id);
+            baseRefType.GetProperty(nameof(BaseOpenApiReference.Type))?.SetValue(baseRef, type);
+            baseRefType.GetProperty(nameof(BaseOpenApiReference.ExternalResource))?.SetValue(baseRef, null);
         }
     }
 }

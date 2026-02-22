@@ -2,7 +2,7 @@
 
 **ALWAYS reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
-OasReader is a .NET Standard 2.0 library that merges external references in OpenAPI specifications into a single document using the Microsoft OpenAPI toolset. The main project targets .NET Standard 2.0 while tests target .NET 8.0.
+OasReader is a .NET Standard 2.0 library that merges external references in OpenAPI specifications into a single document using the Microsoft OpenAPI toolset. The main project targets .NET Standard 2.0 while tests multi-target .NET 8.0 and .NET 10.0.
 
 ## Working Effectively
 
@@ -56,7 +56,7 @@ dotnet format
 4. **Functional validation:**
    Create a simple test to verify the library works:
    ```csharp
-   using Microsoft.OpenApi.Readers;
+   using Microsoft.OpenApi.Reader;
    var result = await OpenApiMultiFileReader.Read("path/to/openapi.yaml");
    Console.WriteLine($"Loaded: {result.OpenApiDocument.Info.Title}");
    ```
@@ -128,4 +128,4 @@ The library automatically:
 ### NuGet Package
 - Package ID: `OasReader`
 - Targets: .NET Standard 2.0 (compatible with .NET Core 2.0+, .NET Framework 4.6.1+, .NET 5.0+)
-- Dependencies: Microsoft.OpenApi.Readers
+- Dependencies: Microsoft.OpenApi, Microsoft.OpenApi.YamlReader

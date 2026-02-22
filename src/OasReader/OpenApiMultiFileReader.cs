@@ -20,14 +20,7 @@ public static class OpenApiMultiFileReader
                 : new Uri($"file://{directoryName}{Path.DirectorySeparatorChar}"),
         };
 
-        if (validationRuleSet != null)
-        {
-            openApiReaderSettings.RuleSet = validationRuleSet;
-        }
-        else
-        {
-            openApiReaderSettings.RuleSet = ValidationRuleSet.GetEmptyRuleSet();
-        }
+        openApiReaderSettings.RuleSet = validationRuleSet ?? ValidationRuleSet.GetEmptyRuleSet();
 
         openApiReaderSettings.AddYamlReader();
 
@@ -35,8 +28,13 @@ public static class OpenApiMultiFileReader
         var result = await OpenApiDocument.LoadAsync(stream, settings: openApiReaderSettings, cancellationToken: cancellationToken);
         var document = result.Document;
 
+        if (document == null)
+        {
+            return new Result(result.Diagnostic, document!, containedExternalReferences: false);
+        }
+
         bool containedExternalReferences = false;
-        if (result.Document.ContainsExternalReferences())
+        if (document.ContainsExternalReferences())
         {
             containedExternalReferences = true;
             document = document.MergeExternalReferences(openApiFile);
