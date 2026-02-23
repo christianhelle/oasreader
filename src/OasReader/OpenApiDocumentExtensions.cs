@@ -1,19 +1,17 @@
-﻿using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Services;
 using OasReader.Visitors;
 
-namespace Microsoft.OpenApi.Models
+namespace Microsoft.OpenApi
 {
     public static class OpenApiDocumentExtensions
     {
-        public static string MergeExternalReferencesAsString(this OpenApiDocument document, string openApiFile)
+        public static async Task<string> MergeExternalReferencesAsStringAsync(this OpenApiDocument document, string openApiFile)
         {
             document.MergeExternalReferences(openApiFile);
 
             return openApiFile.EndsWith("yaml", StringComparison.OrdinalIgnoreCase) ||
                    openApiFile.EndsWith("yml", StringComparison.OrdinalIgnoreCase)
-                ? document.SerializeAsYaml(OpenApiSpecVersion.OpenApi3_0)
-                : document.SerializeAsJson(OpenApiSpecVersion.OpenApi3_0);
+                ? await document.SerializeAsYamlAsync(OpenApiSpecVersion.OpenApi3_0)
+                : await document.SerializeAsJsonAsync(OpenApiSpecVersion.OpenApi3_0);
         }
 
         public static OpenApiDocument MergeExternalReferences(this OpenApiDocument document, string openApiFile)
@@ -35,9 +33,13 @@ namespace Microsoft.OpenApi.Models
             }
             while (missingCount > 0);
 
-            document.Components.Schemas = document.Components.Schemas
-                .OrderBy(kvp => kvp.Key)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            document.Components ??= new OpenApiComponents();
+            if (document.Components.Schemas != null)
+            {
+                document.Components.Schemas = document.Components.Schemas
+                    .OrderBy(kvp => kvp.Key)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
 
             return document;
         }
@@ -45,22 +47,51 @@ namespace Microsoft.OpenApi.Models
         public static bool ContainsExternalReferences(this OpenApiDocument document) =>
             document.Paths
                 ?.Any(kvp =>
-                    kvp.Value.Parameters
+                    (kvp.Value.Parameters?
                         .Where(p => p is not null)
                         .Any(p =>
-                            p.Reference?.IsExternal is true ||
-                            p.Schema?.Reference?.IsExternal is true ||
-                            p.Content.Any(c => c.Value.Schema?.Reference?.IsExternal is true)) is true ||
-                    kvp.Value.Operations?.Any(o => 
-                        o.Value.Parameters                        
+                            p.HasExternalReference() ||
+                            p.Schema.HasExternalReference() ||
+                            (p.Content?.Any(c => c.Value.Schema.HasExternalReference()) == true)) == true) ||
+                    kvp.Value.Operations?.Any(o =>
+                        (o.Value.Parameters?
                             .Where(p => p is not null)
                             .Any(p =>
-                                p.Reference?.IsExternal is true ||
-                                p.Schema?.Reference?.IsExternal is true ||
-                                p.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal is true) is true) ||
-                        o.Value.RequestBody?.Content?.Any(c => c.Value.Schema?.Reference?.IsExternal is true) is true ||
+                                p.HasExternalReference() ||
+                                p.Schema.HasExternalReference() ||
+                                p.Content?.Any(c => c.Value.Schema.HasExternalReference()) == true) == true) ||
+                        o.Value.RequestBody?.Content?.Any(c => c.Value.Schema.HasExternalReference()) == true ||
                         o.Value.Responses?.Any(r =>
-                            r.Value?.Content?.Any(c => c.Value?.Schema?.Reference?.IsExternal is true) is true ||
-                            r.Value?.Headers?.Any(h => h.Value?.Schema?.Reference?.IsExternal is true) is true) is true) is true) is true;
+                            r.Value?.Content?.Any(c => c.Value?.Schema.HasExternalReference() == true) == true ||
+                            r.Value?.Headers?.Any(h => h.Value?.Schema.HasExternalReference() == true) == true) == true) is true) is true;
+    }
+
+    internal static class OpenApiReferenceExtensions
+    {
+        internal static BaseOpenApiReference? GetBaseReference(this IOpenApiReferenceHolder holder)
+        {
+            return holder.GetType().GetProperty("Reference")?.GetValue(holder) as BaseOpenApiReference;
+        }
+
+        internal static bool HasExternalReference(this object? element)
+        {
+            if (element is not IOpenApiReferenceHolder holder) return false;
+            return holder.GetBaseReference()?.IsExternal == true;
+        }
+
+        internal static void SetLocalReference(this IOpenApiReferenceHolder holder, string id, ReferenceType type)
+        {
+            var baseRef = holder.GetBaseReference();
+            if (baseRef == null)
+            {
+                return;
+            }
+
+            // BaseOpenApiReference properties are init-only, so we must use reflection to set them
+            var baseRefType = typeof(BaseOpenApiReference);
+            baseRefType.GetProperty(nameof(BaseOpenApiReference.Id))?.SetValue(baseRef, id);
+            baseRefType.GetProperty(nameof(BaseOpenApiReference.Type))?.SetValue(baseRef, type);
+            baseRefType.GetProperty(nameof(BaseOpenApiReference.ExternalResource))?.SetValue(baseRef, null);
+        }
     }
 }

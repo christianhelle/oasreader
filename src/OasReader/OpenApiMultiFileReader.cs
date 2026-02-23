@@ -1,9 +1,9 @@
-﻿using System.Net;
+using System.Net;
 using System.Security;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Validations;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Reader;
 
-namespace Microsoft.OpenApi.Readers;
+namespace Microsoft.OpenApi.Reader;
 
 public static class OpenApiMultiFileReader
 {
@@ -18,22 +18,30 @@ public static class OpenApiMultiFileReader
             BaseUrl = openApiFile.StartsWith("http", StringComparison.OrdinalIgnoreCase)
                 ? new Uri(openApiFile)
                 : new Uri($"file://{directoryName}{Path.DirectorySeparatorChar}"),
-            RuleSet = validationRuleSet ?? ValidationRuleSet.GetEmptyRuleSet(),
         };
 
+        openApiReaderSettings.RuleSet = validationRuleSet ?? ValidationRuleSet.GetEmptyRuleSet();
+
+        openApiReaderSettings.AddYamlReader();
+
         using var stream = await GetStream(openApiFile);
-        var streamReader = new OpenApiStreamReader(openApiReaderSettings);
-        var result = await streamReader.ReadAsync(stream, cancellationToken);
-        var document = result.OpenApiDocument;
+        var result = await OpenApiDocument.LoadAsync(stream, settings: openApiReaderSettings, cancellationToken: cancellationToken);
+        var diagnostic = result.Diagnostic ?? new OpenApiDiagnostic();
+        var document = result.Document;
+
+        if (document == null)
+        {
+            return new Result(diagnostic, document!, containedExternalReferences: false);
+        }
 
         bool containedExternalReferences = false;
-        if (result.OpenApiDocument.ContainsExternalReferences())
+        if (document.ContainsExternalReferences())
         {
             containedExternalReferences = true;
             document = document.MergeExternalReferences(openApiFile);
         }
 
-        return new Result(result.OpenApiDiagnostic, document, containedExternalReferences);
+        return new Result(diagnostic, document, containedExternalReferences);
     }
 
     private static async Task<Stream> GetStream(string input)

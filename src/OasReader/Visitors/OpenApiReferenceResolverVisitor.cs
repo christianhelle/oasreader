@@ -1,7 +1,5 @@
-﻿using Microsoft.OpenApi.Interfaces;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
-using Microsoft.OpenApi.Services;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Reader;
 
 namespace OasReader.Visitors
 {
@@ -43,54 +41,61 @@ namespace OasReader.Visitors
             }
         }
 
-        public override void Visit(IOpenApiReferenceable referenceable)
+        public override void Visit(IOpenApiReferenceHolder referenceHolder)
         {
-            if (!(referenceable.Reference?.IsExternal ?? false) ||
-                !TryLoadDocument(referenceable, out var externalDocument) ||
+            var reference = referenceHolder.GetBaseReference();
+            if (reference == null || !reference.IsExternal)
+            {
+                return;
+            }
+
+            if (!TryLoadDocument(reference, out var externalDocument) ||
                 externalDocument == null)
             {
                 return;
             }
 
-            var localReference = new OpenApiReference
+            var id = reference.Id?.Split('/').Last();
+            if (string.IsNullOrEmpty(id))
             {
-                Id = referenceable.Reference!.Id.Split('/').Last(),
-                Type = referenceable.Reference.Type ?? ReferenceType.Schema
-            };
-
-            if (externalDocument.ResolveReference(localReference) is { } reference)
-            {
-                Cache.Add(reference);
+                return;
             }
 
-            referenceable.Reference = localReference;
+            var type = reference.Type;
+
+            var resolved = ComponentResolver.ResolveFromDocument(externalDocument, type, id!);
+            if (resolved != null)
+            {
+                Cache.Add(type, id!, resolved);
+                referenceHolder.SetLocalReference(id!, type);
+            }
         }
 
-        private bool TryLoadDocument(IOpenApiReferenceable referenceable, out OpenApiDocument? document)
+        private bool TryLoadDocument(BaseOpenApiReference reference, out OpenApiDocument? document)
         {
             document = null;
-            var reference = referenceable.Reference?.IsExternal ?? false
-                ? referenceable.Reference.ExternalResource
+            var externalResource = reference.IsExternal
+                ? reference.ExternalResource
                 : null;
-            if (reference == null)
+            if (externalResource == null)
             {
                 return false;
             }
 
-            if (documentCache.TryGetValue(reference, out OpenApiDocument? value))
+            if (documentCache.TryGetValue(externalResource, out OpenApiDocument? value))
             {
                 document = value;
                 return true;
             }
 
-            var externalDocument = GetDocument(reference);
+            var externalDocument = GetDocument(externalResource);
             if (externalDocument == null)
             {
                 return false;
             }
 
-            documentCache[reference] = externalDocument;
-            document = documentCache[reference];
+            documentCache[externalResource] = externalDocument;
+            document = documentCache[externalResource];
             return true;
         }
 
@@ -106,7 +111,6 @@ namespace OasReader.Visitors
                 try
                 {
                     return GetDocumentFromStream(
-                        reference,
                         HttpClient.Value.GetStreamAsync(new Uri(reference)).GetAwaiter().GetResult());
                 }
                 catch
@@ -122,7 +126,6 @@ namespace OasReader.Visitors
                     var baseUri = new Uri(openApiFile);
                     var absoluteUri = new Uri(baseUri, reference);
                     return GetDocumentFromStream(
-                        absoluteUri.ToString(),
                         HttpClient.Value.GetStreamAsync(absoluteUri).GetAwaiter().GetResult());
                 }
                 catch
@@ -143,14 +146,21 @@ namespace OasReader.Visitors
             }
 
             using var fs = file.OpenRead();
-            return GetDocumentFromStream(reference, fs);
+            return GetDocumentFromStream(fs);
         }
 
-        private static OpenApiDocument? GetDocumentFromStream(string reference, Stream stream)
+        private static OpenApiDocument? GetDocumentFromStream(Stream stream)
         {
             try
             {
-                return new OpenApiStreamReader().Read(stream, out var results);
+                using var ms = new MemoryStream();
+                stream.CopyTo(ms);
+                ms.Position = 0;
+
+                var settings = new OpenApiReaderSettings();
+                settings.AddYamlReader();
+                var result = OpenApiDocument.Load(ms, settings: settings);
+                return result.Document;
             }
             catch
             {

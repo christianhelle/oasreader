@@ -1,7 +1,6 @@
 using FluentAssertions;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
-using Microsoft.OpenApi.Validations;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Reader;
 using Xunit;
 
 namespace OasReader.Tests;
@@ -25,11 +24,11 @@ public class OpenApiDocumentExtensionsTests
         await File.WriteAllTextAsync(componentsFilename, componentContents);
         await File.WriteAllTextAsync(openapiFilename, apiContents);
 
-        var file = File.OpenRead(openapiFilename);
-        var textReader = new StreamReader(file);
-        var reader = new OpenApiTextReaderReader();
-        var result = await reader.ReadAsync(textReader, CancellationToken.None);
-        OpenApiDocument sut = result.OpenApiDocument;
+        using var file = File.OpenRead(openapiFilename);
+        var settings = new OpenApiReaderSettings();
+        settings.AddYamlReader();
+        var result = await OpenApiDocument.LoadAsync(file, settings: settings);
+        OpenApiDocument sut = result.Document;
 
         sut.ContainsExternalReferences().Should().BeTrue();
     }
@@ -74,13 +73,12 @@ public class OpenApiDocumentExtensionsTests
         var apiContents = EmbeddedResources.GetStream(apiFile);
         await File.WriteAllTextAsync(openapiFilename, apiContents);
 
-        var file = File.OpenRead(openapiFilename);
-        var textReader = new StreamReader(file);
-        var reader = new OpenApiTextReaderReader();
-        var result = await reader.ReadAsync(textReader, CancellationToken.None);
-        OpenApiDocument sut = result.OpenApiDocument;
+        using var file = File.OpenRead(openapiFilename);
+        var settings = new OpenApiReaderSettings();
+        settings.AddYamlReader();
+        var result = await OpenApiDocument.LoadAsync(file, settings: settings);
 
-        sut.ContainsExternalReferences().Should().BeFalse();
+        result.Document.ContainsExternalReferences().Should().BeFalse();
     }
 
     [Theory]
