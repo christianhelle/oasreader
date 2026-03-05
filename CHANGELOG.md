@@ -2,7 +2,21 @@
 
 ## [Unreleased](https://github.com/christianhelle/oasreader/tree/HEAD)
 
-[Full Changelog](https://github.com/christianhelle/oasreader/compare/1.6.16.16...HEAD)
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.3.1.17...HEAD)
+
+**Merged pull requests:**
+
+- Update openapi-dotnet monorepo to 3.4.0 [\#151](https://github.com/christianhelle/oasreader/pull/151) ([renovate[bot]](https://github.com/apps/renovate))
+- Bump Microsoft.NET.Test.Sdk from 18.0.1 to 18.3.0 [\#150](https://github.com/christianhelle/oasreader/pull/150) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update dependency Microsoft.NET.Test.Sdk to 18.3.0 [\#149](https://github.com/christianhelle/oasreader/pull/149) ([renovate[bot]](https://github.com/apps/renovate))
+- Bump coverlet.collector from 6.0.4 to 8.0.0 [\#147](https://github.com/christianhelle/oasreader/pull/147) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update dependency Microsoft.SourceLink.GitHub to v10 [\#141](https://github.com/christianhelle/oasreader/pull/141) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency ruby to v4 [\#140](https://github.com/christianhelle/oasreader/pull/140) ([renovate[bot]](https://github.com/apps/renovate))
+- Update actions/upload-artifact action to v7 [\#138](https://github.com/christianhelle/oasreader/pull/138) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [3.3.1.17](https://github.com/christianhelle/oasreader/tree/3.3.1.17) (2026-02-23)
+
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/1.6.16.16...3.3.1.17)
 
 **Implemented enhancements:**
 
