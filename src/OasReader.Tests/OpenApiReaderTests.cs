@@ -50,6 +50,7 @@ public class OpenApiReaderTests
     public async Task Returns_Document_With_External_Schemas(string apiFile, string componentsFile, string schemaName)
     {
         OpenApiDocument result = await Arrange(apiFile, componentsFile);
+        result.Components.Should().NotBeNull();
         result.Components.Schemas.Should().ContainKey(schemaName);
 
     }
