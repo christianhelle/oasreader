@@ -4,6 +4,18 @@
 
 OasReader is a .NET Standard 2.0 library that merges external references in OpenAPI specifications into a single document using the Microsoft OpenAPI toolset. The main project targets .NET Standard 2.0 while tests multi-target .NET 8.0 and .NET 10.0.
 
+## Branch Safety
+
+- Never work from the `main` branch.
+- Before making any repository changes, create or switch to a `feature/*` or `fix/*` branch.
+- If the current branch is `main`, stop and switch branches before running implementation steps.
+
+## Git Workflow
+
+- Commit progress automatically in small, logical groups instead of waiting for one large final commit.
+- Use a one-line commit subject that briefly describes the logical group being committed.
+- Keep commit contents focused so each commit is easy to review, revert, or cherry-pick.
+
 ## Working Effectively
 
 ### Prerequisites
