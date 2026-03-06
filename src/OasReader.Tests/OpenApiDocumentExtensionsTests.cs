@@ -28,7 +28,8 @@ public class OpenApiDocumentExtensionsTests
         var settings = new OpenApiReaderSettings();
         settings.AddYamlReader();
         var result = await OpenApiDocument.LoadAsync(file, settings: settings);
-        OpenApiDocument sut = result.Document;
+        result.Document.Should().NotBeNull();
+        var sut = result.Document!;
 
         sut.ContainsExternalReferences().Should().BeTrue();
     }
@@ -77,8 +78,9 @@ public class OpenApiDocumentExtensionsTests
         var settings = new OpenApiReaderSettings();
         settings.AddYamlReader();
         var result = await OpenApiDocument.LoadAsync(file, settings: settings);
+        result.Document.Should().NotBeNull();
 
-        result.Document.ContainsExternalReferences().Should().BeFalse();
+        result.Document!.ContainsExternalReferences().Should().BeFalse();
     }
 
     [Theory]
