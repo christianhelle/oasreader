@@ -2,7 +2,19 @@
 
 ## [Unreleased](https://github.com/christianhelle/oasreader/tree/HEAD)
 
-[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.3.1.17...HEAD)
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.4.0.18...HEAD)
+
+**Merged pull requests:**
+
+- Bump Microsoft.SourceLink.GitHub from 10.0.103 to 10.0.201 [\#155](https://github.com/christianhelle/oasreader/pull/155) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [3.4.0.18](https://github.com/christianhelle/oasreader/tree/3.4.0.18) (2026-03-06)
+
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.3.1.17...3.4.0.18)
+
+**Implemented enhancements:**
+
+- Improve coverage and update workflow rules [\#152](https://github.com/christianhelle/oasreader/pull/152) ([christianhelle](https://github.com/christianhelle))
 
 **Merged pull requests:**
 
