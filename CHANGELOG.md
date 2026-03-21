@@ -10,6 +10,8 @@
 
 **Merged pull requests:**
 
+- Bump coverlet.collector from 8.0.0 to 8.0.1 [\#158](https://github.com/christianhelle/oasreader/pull/158) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update dependency ruby to v4.0.2 [\#156](https://github.com/christianhelle/oasreader/pull/156) ([renovate[bot]](https://github.com/apps/renovate))
 - Bump Microsoft.SourceLink.GitHub from 10.0.103 to 10.0.201 [\#155](https://github.com/christianhelle/oasreader/pull/155) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [3.4.0.18](https://github.com/christianhelle/oasreader/tree/3.4.0.18) (2026-03-06)
