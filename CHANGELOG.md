@@ -4,6 +4,10 @@
 
 [Full Changelog](https://github.com/christianhelle/oasreader/compare/3.4.0.18...HEAD)
 
+**Implemented enhancements:**
+
+- Update openapi-dotnet monorepo to 3.5.0 [\#159](https://github.com/christianhelle/oasreader/pull/159) ([renovate[bot]](https://github.com/apps/renovate))
+
 **Merged pull requests:**
 
 - Bump Microsoft.SourceLink.GitHub from 10.0.103 to 10.0.201 [\#155](https://github.com/christianhelle/oasreader/pull/155) ([dependabot[bot]](https://github.com/apps/dependabot))
