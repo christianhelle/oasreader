@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/christianhelle/oasreader/tree/HEAD)
 
-[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.4.0.18...HEAD)
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.5.0.19...HEAD)
+
+**Merged pull requests:**
+
+- Update dependency Microsoft.NET.Test.Sdk to 18.4.0 [\#164](https://github.com/christianhelle/oasreader/pull/164) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [3.5.0.19](https://github.com/christianhelle/oasreader/tree/3.5.0.19) (2026-03-21)
+
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.4.0.18...3.5.0.19)
 
 **Implemented enhancements:**
 
