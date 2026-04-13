@@ -6,7 +6,10 @@
 
 **Merged pull requests:**
 
+- Update actions/github-script action to v9 [\#166](https://github.com/christianhelle/oasreader/pull/166) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency Microsoft.NET.Test.Sdk to 18.4.0 [\#164](https://github.com/christianhelle/oasreader/pull/164) ([renovate[bot]](https://github.com/apps/renovate))
+- Update openapi-dotnet monorepo to 3.5.1 [\#161](https://github.com/christianhelle/oasreader/pull/161) ([renovate[bot]](https://github.com/apps/renovate))
+- Update codecov/codecov-action action to v6 [\#160](https://github.com/christianhelle/oasreader/pull/160) ([renovate[bot]](https://github.com/apps/renovate))
 
 ## [3.5.0.19](https://github.com/christianhelle/oasreader/tree/3.5.0.19) (2026-03-21)
 
