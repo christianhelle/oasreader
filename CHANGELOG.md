@@ -6,6 +6,7 @@
 
 **Merged pull requests:**
 
+- Bump Microsoft.SourceLink.GitHub from 10.0.201 to 10.0.202 [\#171](https://github.com/christianhelle/oasreader/pull/171) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update openapi-dotnet monorepo to 3.5.2 [\#170](https://github.com/christianhelle/oasreader/pull/170) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/github-script action to v9 [\#166](https://github.com/christianhelle/oasreader/pull/166) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency Microsoft.NET.Test.Sdk to 18.4.0 [\#164](https://github.com/christianhelle/oasreader/pull/164) ([renovate[bot]](https://github.com/apps/renovate))
