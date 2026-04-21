@@ -6,6 +6,8 @@
 
 **Merged pull requests:**
 
+- Update dependency ruby to v4.0.3 [\#174](https://github.com/christianhelle/oasreader/pull/174) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency coverlet.collector to v10 [\#172](https://github.com/christianhelle/oasreader/pull/172) ([renovate[bot]](https://github.com/apps/renovate))
 - Bump Microsoft.SourceLink.GitHub from 10.0.201 to 10.0.202 [\#171](https://github.com/christianhelle/oasreader/pull/171) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update openapi-dotnet monorepo to 3.5.2 [\#170](https://github.com/christianhelle/oasreader/pull/170) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/github-script action to v9 [\#166](https://github.com/christianhelle/oasreader/pull/166) ([renovate[bot]](https://github.com/apps/renovate))
