@@ -6,10 +6,15 @@
 
 **Merged pull requests:**
 
+- Update dependency coverlet.collector to 10.0.1 [\#184](https://github.com/christianhelle/oasreader/pull/184) ([renovate[bot]](https://github.com/apps/renovate))
+- Bump Microsoft.NET.Test.Sdk from 18.4.0 to 18.5.1 [\#180](https://github.com/christianhelle/oasreader/pull/180) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update dependency Microsoft.NET.Test.Sdk to 18.5.1 [\#176](https://github.com/christianhelle/oasreader/pull/176) ([renovate[bot]](https://github.com/apps/renovate))
+- Bump Microsoft.SourceLink.GitHub from 10.0.202 to 10.0.203 [\#175](https://github.com/christianhelle/oasreader/pull/175) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update dependency ruby to v4.0.3 [\#174](https://github.com/christianhelle/oasreader/pull/174) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency coverlet.collector to v10 [\#172](https://github.com/christianhelle/oasreader/pull/172) ([renovate[bot]](https://github.com/apps/renovate))
 - Bump Microsoft.SourceLink.GitHub from 10.0.201 to 10.0.202 [\#171](https://github.com/christianhelle/oasreader/pull/171) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update openapi-dotnet monorepo to 3.5.2 [\#170](https://github.com/christianhelle/oasreader/pull/170) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency Microsoft.SourceLink.GitHub to 10.0.203 [\#169](https://github.com/christianhelle/oasreader/pull/169) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/github-script action to v9 [\#166](https://github.com/christianhelle/oasreader/pull/166) ([renovate[bot]](https://github.com/apps/renovate))
 - Update dependency Microsoft.NET.Test.Sdk to 18.4.0 [\#164](https://github.com/christianhelle/oasreader/pull/164) ([renovate[bot]](https://github.com/apps/renovate))
 - Update openapi-dotnet monorepo to 3.5.1 [\#161](https://github.com/christianhelle/oasreader/pull/161) ([renovate[bot]](https://github.com/apps/renovate))
