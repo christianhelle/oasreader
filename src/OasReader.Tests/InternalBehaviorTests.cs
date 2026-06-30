@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text;
 using FluentAssertions;
 using Microsoft.OpenApi;
@@ -211,17 +210,13 @@ public class InternalBehaviorTests
     }
 
     [Fact]
-    public async Task OpenApiReferenceResolverVisitor_ResolvesExternalSchemas_FromLocalFiles()
+    public async Task OpenApiReferenceResolverVisitor_ResolvesExternalSchemas_FromSource()
     {
-        var folder = CreateTemporaryFolder();
-        var openApiPath = Path.Combine(folder, "openapi.yaml");
-        var componentsPath = Path.Combine(folder, "components.yaml");
-
-        await File.WriteAllTextAsync(openApiPath, CreateOpenApiWithExternalReference("components.yaml#/components/schemas/Pet"));
-        await File.WriteAllTextAsync(componentsPath, CreateComponentsDocument());
-
-        var document = await LoadDocumentAsync(openApiPath);
-        var visitor = new OpenApiReferenceResolverVisitor(openApiPath, new Dictionary<string, OpenApiDocument>());
+        var document = await LoadDocumentFromTextAsync(CreateOpenApiWithExternalReference("components.yaml#/components/schemas/Pet"));
+        var components = await LoadDocumentFromTextAsync(CreateComponentsDocument());
+        var source = new InMemoryExternalDocumentSource(
+            new Dictionary<string, OpenApiDocument> { ["components.yaml"] = components });
+        var visitor = new OpenApiReferenceResolverVisitor(source, new Dictionary<string, OpenApiDocument>());
 
         new OpenApiWalker(visitor).Walk(document);
         visitor.Cache.UpdateDocument(document);
@@ -229,18 +224,15 @@ public class InternalBehaviorTests
         visitor.Cache.Count.Should().Be(1);
         document.Components.Should().NotBeNull();
         document.Components!.Schemas.Should().ContainKey("Pet");
+        source.CallCount.Should().Be(1);
     }
 
     [Fact]
-    public async Task OpenApiReferenceResolverVisitor_IgnoresMissingExternalFiles()
+    public async Task OpenApiReferenceResolverVisitor_IgnoresMissingExternalDocuments()
     {
-        var folder = CreateTemporaryFolder();
-        var openApiPath = Path.Combine(folder, "openapi.yaml");
-
-        await File.WriteAllTextAsync(openApiPath, CreateOpenApiWithExternalReference("missing-components.yaml#/components/schemas/Pet"));
-
-        var document = await LoadDocumentAsync(openApiPath);
-        var visitor = new OpenApiReferenceResolverVisitor(openApiPath, new Dictionary<string, OpenApiDocument>());
+        var document = await LoadDocumentFromTextAsync(CreateOpenApiWithExternalReference("missing-components.yaml#/components/schemas/Pet"));
+        var source = new InMemoryExternalDocumentSource(new Dictionary<string, OpenApiDocument>());
+        var visitor = new OpenApiReferenceResolverVisitor(source, new Dictionary<string, OpenApiDocument>());
 
         new OpenApiWalker(visitor).Walk(document);
 
@@ -310,91 +302,71 @@ public class InternalBehaviorTests
     }
 
     [Fact]
-    public void OpenApiReferenceResolverVisitor_GetDocument_ReturnsNull_ForWhitespaceReference()
+    public void ExternalDocumentSource_GetDocument_ReturnsNull_ForWhitespaceReference()
     {
-        var visitor = new OpenApiReferenceResolverVisitor("openapi.yaml", new Dictionary<string, OpenApiDocument>());
-        var method = typeof(OpenApiReferenceResolverVisitor).GetMethod("GetDocument", BindingFlags.Instance | BindingFlags.NonPublic);
+        var source = new ExternalDocumentSource("openapi.yaml");
 
-        var document = method!.Invoke(visitor, ["   "]);
-
-        document.Should().BeNull();
+        source.GetDocument("   ").Should().BeNull();
     }
 
     [Fact]
-    public void OpenApiReferenceResolverVisitor_GetDocument_ReturnsNull_WhenAbsoluteHttpReferenceFails()
+    public void ExternalDocumentSource_GetDocument_ReturnsNull_WhenAbsoluteHttpReferenceFails()
     {
-        var visitor = new OpenApiReferenceResolverVisitor("openapi.yaml", new Dictionary<string, OpenApiDocument>());
-        var method = typeof(OpenApiReferenceResolverVisitor).GetMethod("GetDocument", BindingFlags.Instance | BindingFlags.NonPublic);
+        var source = new ExternalDocumentSource("openapi.yaml");
 
-        var document = method!.Invoke(visitor, ["http://127.0.0.1:1/missing.yaml"]);
-
-        document.Should().BeNull();
+        source.GetDocument("http://127.0.0.1:1/missing.yaml").Should().BeNull();
     }
 
     [Fact]
-    public void OpenApiReferenceResolverVisitor_GetDocument_ReturnsNull_WhenRelativeHttpReferenceFails()
+    public void ExternalDocumentSource_GetDocument_ReturnsNull_WhenRelativeHttpReferenceFails()
     {
-        var visitor = new OpenApiReferenceResolverVisitor("http://127.0.0.1:1/openapi.yaml", new Dictionary<string, OpenApiDocument>());
-        var method = typeof(OpenApiReferenceResolverVisitor).GetMethod("GetDocument", BindingFlags.Instance | BindingFlags.NonPublic);
+        var source = new ExternalDocumentSource("http://127.0.0.1:1/openapi.yaml");
 
-        var document = method!.Invoke(visitor, ["components.yaml"]);
-
-        document.Should().BeNull();
+        source.GetDocument("components.yaml").Should().BeNull();
     }
 
     [Fact]
-    public void OpenApiReferenceResolverVisitor_GetDocumentFromStream_ReturnsNull_WhenReadFails()
+    public void ExternalDocumentSource_GetDocumentFromStream_ReturnsNull_WhenReadFails()
     {
-        var method = typeof(OpenApiReferenceResolverVisitor).GetMethod("GetDocumentFromStream", BindingFlags.Static | BindingFlags.NonPublic);
-
-        var document = method!.Invoke(null, [new ThrowingStream()]);
-
-        document.Should().BeNull();
+        ExternalDocumentSource.GetDocumentFromStream(new ThrowingStream()).Should().BeNull();
     }
 
     [Fact]
-    public void OpenApiReferenceResolverVisitor_TryLoadDocument_UsesCachedDocument()
+    public async Task OpenApiReferenceResolverVisitor_UsesCachedWorkingSetDocument_WithoutCallingSource()
     {
-        var cachedDocument = new OpenApiDocument();
-        var documentCache = new Dictionary<string, OpenApiDocument>
-        {
-            ["components.yaml"] = cachedDocument,
-        };
-        var visitor = new OpenApiReferenceResolverVisitor("openapi.yaml", documentCache);
-        var reference = new BaseOpenApiReference
-        {
-            ExternalResource = "components.yaml",
-        };
-        var method = typeof(OpenApiReferenceResolverVisitor).GetMethod("TryLoadDocument", BindingFlags.Instance | BindingFlags.NonPublic);
-        var parameters = new object?[] { reference, null };
+        var cachedDocument = await LoadDocumentFromTextAsync(CreateComponentsDocument());
+        var document = await LoadDocumentFromTextAsync(CreateOpenApiWithExternalReference("components.yaml#/components/schemas/Pet"));
+        var source = new InMemoryExternalDocumentSource(new Dictionary<string, OpenApiDocument>());
+        var workingSet = new Dictionary<string, OpenApiDocument> { ["components.yaml"] = cachedDocument };
+        var visitor = new OpenApiReferenceResolverVisitor(source, workingSet);
 
-        var loaded = (bool)method!.Invoke(visitor, parameters)!;
+        new OpenApiWalker(visitor).Walk(document);
+        visitor.Cache.UpdateDocument(document);
 
-        loaded.Should().BeTrue();
-        parameters[1].Should().BeSameAs(cachedDocument);
+        source.CallCount.Should().Be(0);
+        document.Components.Should().NotBeNull();
+        document.Components!.Schemas.Should().ContainKey("Pet");
     }
 
     [Fact]
-    public void OpenApiReferenceResolverVisitor_TryLoadDocument_ReturnsFalse_WhenReferenceIsNotExternal()
+    public void OpenApiReferenceResolverVisitor_SkipsNonExternalReferences()
     {
-        var visitor = new OpenApiReferenceResolverVisitor("openapi.yaml", new Dictionary<string, OpenApiDocument>());
-        var reference = new BaseOpenApiReference();
-        var method = typeof(OpenApiReferenceResolverVisitor).GetMethod("TryLoadDocument", BindingFlags.Instance | BindingFlags.NonPublic);
-        var parameters = new object?[] { reference, null };
+        var source = new InMemoryExternalDocumentSource(new Dictionary<string, OpenApiDocument>());
+        var visitor = new OpenApiReferenceResolverVisitor(source, new Dictionary<string, OpenApiDocument>());
 
-        var loaded = (bool)method!.Invoke(visitor, parameters)!;
+        visitor.Visit(new FakeReferenceHolder { Reference = new BaseOpenApiReference() });
 
-        loaded.Should().BeFalse();
-        parameters[1].Should().BeNull();
+        visitor.Cache.Count.Should().Be(0);
+        source.CallCount.Should().Be(0);
     }
 
     [Fact]
     public async Task OpenApiReferenceResolverVisitor_Returns_WhenReferenceIdIsMissing()
     {
         var cachedDocument = await LoadDocumentFromTextAsync(CreateComponentsDocument());
-        var visitor = new OpenApiReferenceResolverVisitor(
-            "openapi.yaml",
+        var source = new InMemoryExternalDocumentSource(
             new Dictionary<string, OpenApiDocument> { ["components.yaml"] = cachedDocument });
+        var visitor = new OpenApiReferenceResolverVisitor(source, new Dictionary<string, OpenApiDocument>());
         var holder = new FakeReferenceHolder
         {
             Reference = new BaseOpenApiReference

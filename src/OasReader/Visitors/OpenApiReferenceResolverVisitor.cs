@@ -1,44 +1,20 @@
 using Microsoft.OpenApi;
-using Microsoft.OpenApi.Reader;
 
 namespace OasReader.Visitors
 {
     internal class OpenApiReferenceResolverVisitor : OpenApiVisitorBase
     {
         private readonly Dictionary<string, OpenApiDocument> documentCache;
-        private static readonly Lazy<HttpClient> HttpClient = new();
-        private readonly List<FileInfo> files;
-        private readonly string openApiFile;
+        private readonly IExternalDocumentSource source;
 
         internal ReferenceCache Cache { get; } = new();
 
         public OpenApiReferenceResolverVisitor(
-            string openApiFile,
+            IExternalDocumentSource source,
             Dictionary<string, OpenApiDocument> documentCache)
         {
+            this.source = source;
             this.documentCache = documentCache;
-            this.openApiFile = openApiFile;
-
-            if (!openApiFile.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-            {
-                var directoryName = Path.GetDirectoryName(openApiFile);
-                if (!string.IsNullOrEmpty(directoryName))
-                {
-                    files = Directory
-                        .GetFiles(directoryName, $"*{Path.GetExtension(openApiFile)}", SearchOption.AllDirectories)
-                        .Select(f => new FileInfo(f))
-                        .Where(f => f.Exists)
-                        .ToList();
-                }
-                else
-                {
-                    files = new List<FileInfo>();
-                }
-            }
-            else
-            {
-                files = new List<FileInfo>();
-            }
         }
 
         public override void Visit(IOpenApiReferenceHolder referenceHolder)
@@ -88,7 +64,7 @@ namespace OasReader.Visitors
                 return true;
             }
 
-            var externalDocument = GetDocument(externalResource);
+            var externalDocument = source.GetDocument(externalResource);
             if (externalDocument == null)
             {
                 return false;
@@ -97,75 +73,6 @@ namespace OasReader.Visitors
             documentCache[externalResource] = externalDocument;
             document = documentCache[externalResource];
             return true;
-        }
-
-        private OpenApiDocument? GetDocument(string reference)
-        {
-            if (string.IsNullOrWhiteSpace(reference))
-            {
-                return null;
-            }
-
-            if (reference.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-            {
-                try
-                {
-                    return GetDocumentFromStream(
-                        HttpClient.Value.GetStreamAsync(new Uri(reference)).GetAwaiter().GetResult());
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-
-            if (openApiFile.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-            {
-                try
-                {
-                    var baseUri = new Uri(openApiFile);
-                    var absoluteUri = new Uri(baseUri, reference);
-                    return GetDocumentFromStream(
-                        HttpClient.Value.GetStreamAsync(absoluteUri).GetAwaiter().GetResult());
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-
-            var file = files.FirstOrDefault(
-                f => f.FullName.EndsWith(
-                    reference
-                        .Replace('\\', Path.DirectorySeparatorChar)
-                        .Replace('/', Path.DirectorySeparatorChar)));
-
-            if (file == null)
-            {
-                return null;
-            }
-
-            using var fs = file.OpenRead();
-            return GetDocumentFromStream(fs);
-        }
-
-        private static OpenApiDocument? GetDocumentFromStream(Stream stream)
-        {
-            try
-            {
-                using var ms = new MemoryStream();
-                stream.CopyTo(ms);
-                ms.Position = 0;
-
-                var settings = new OpenApiReaderSettings();
-                settings.AddYamlReader();
-                var result = OpenApiDocument.Load(ms, settings: settings);
-                return result.Document;
-            }
-            catch
-            {
-                return null;
-            }
         }
     }
 }
