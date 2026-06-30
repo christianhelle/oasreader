@@ -14,13 +14,16 @@ namespace Microsoft.OpenApi
                 : await document.SerializeAsJsonAsync(OpenApiSpecVersion.OpenApi3_0);
         }
 
-        public static OpenApiDocument MergeExternalReferences(this OpenApiDocument document, string openApiFile)
+        public static OpenApiDocument MergeExternalReferences(this OpenApiDocument document, string openApiFile) =>
+            document.MergeExternalReferences(new ExternalDocumentSource(openApiFile));
+
+        internal static OpenApiDocument MergeExternalReferences(this OpenApiDocument document, IExternalDocumentSource source)
         {
             var cache = new Dictionary<string, OpenApiDocument>();
             int missingCount;
             do
             {
-                var referenceVisitor = new OpenApiReferenceResolverVisitor(openApiFile, cache);
+                var referenceVisitor = new OpenApiReferenceResolverVisitor(source, cache);
                 var referenceWalker = new OpenApiWalker(referenceVisitor);
                 referenceWalker.Walk(document);
                 referenceVisitor.Cache.UpdateDocument(document);
