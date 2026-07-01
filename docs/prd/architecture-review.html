@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Architecture review — oasreader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose", flowchart: { curve: "basis" } });
+    </script>
+    <style>
+      .seam { stroke-dasharray: 6 5; }
+      .deep { background: linear-gradient(135deg, #0f172a, #1e293b); }
+      .schem { letter-spacing: .12em; }
+      .faded { opacity: .38; }
+      .leak-txt { color: #dc2626; }
+      .card-num { font-variant-numeric: tabular-nums; }
+      pre.mermaid { background: transparent; }
+    </style>
+  </head>
+  <body class="bg-stone-50 text-slate-900 font-sans antialiased">
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+
+      <!-- ───────────────────────── HEADER ───────────────────────── -->
+      <header class="space-y-5">
+        <div class="flex items-baseline justify-between flex-wrap gap-2">
+          <h1 class="text-4xl font-serif font-semibold tracking-tight">Architecture review — <span class="text-indigo-700">oasreader</span></h1>
+          <span class="text-sm text-slate-500">June 30, 2026</span>
+        </div>
+        <p class="text-slate-600 max-w-3xl">Deepening opportunities for the external-reference merge engine. Each candidate turns shallow modules into deep ones — small interface, behaviour absorbed inside, testable through that interface.</p>
+        <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-600 border-t border-slate-200 pt-4">
+          <span class="inline-flex items-center gap-2"><span class="inline-block w-5 h-3 border-2 border-slate-700 bg-white"></span> module</span>
+          <span class="inline-flex items-center gap-2"><svg width="34" height="10"><line x1="0" y1="5" x2="34" y2="5" stroke="#475569" stroke-width="2" class="seam"/></svg> seam</span>
+          <span class="inline-flex items-center gap-2"><svg width="34" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#dc2626" stroke-width="2"/><path d="M30 1 L34 5 L30 9 Z" fill="#dc2626"/></svg> leakage</span>
+          <span class="inline-flex items-center gap-2"><span class="inline-block w-5 h-3 deep rounded-sm"></span> deep module</span>
+        </div>
+      </header>
+
+      <!-- ───────────────────────── CANDIDATES ───────────────────────── -->
+      <section id="candidates" class="space-y-12">
+
+        <!-- ============ CARD 1 ============ -->
+        <article id="c1" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 pt-6 pb-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <h2 class="text-2xl font-serif font-semibold"><span class="card-num text-slate-300 mr-2">01</span>Collapse the <code class="text-indigo-700 text-xl">ReferenceType</code> triple-switch</h2>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">Strong</span>
+                <span class="text-xs font-medium uppercase tracking-wide px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">in-process</span>
+              </div>
+            </div>
+            <p class="font-mono text-sm text-slate-500 mt-3">Visitors/ComponentResolver.cs · Visitors/ReferenceCache.cs</p>
+          </div>
+
+          <!-- before / after -->
+          <div class="grid md:grid-cols-2 gap-px bg-slate-200 border-y border-slate-200">
+            <!-- BEFORE -->
+            <div class="bg-stone-50 p-5">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3 schem">Before — same enum, switched three times</p>
+              <div class="grid grid-cols-3 gap-2 text-[10px] leading-tight">
+                <div class="border border-slate-300 rounded bg-white">
+                  <div class="px-2 py-1 border-b border-slate-200 font-semibold text-slate-600">ExistsInDocument</div>
+                  <div class="px-2 py-1 font-mono text-slate-500 space-y-0.5">
+                    <div>Schema</div><div>Response</div><div>Parameter</div><div class="text-slate-400">…6 more</div><div class="leak-txt">Tag ✗</div>
+                  </div>
+                </div>
+                <div class="border border-slate-300 rounded bg-white">
+                  <div class="px-2 py-1 border-b border-slate-200 font-semibold text-slate-600">ResolveFromDocument</div>
+                  <div class="px-2 py-1 font-mono text-slate-500 space-y-0.5">
+                    <div>Schema</div><div>Response</div><div>Parameter</div><div class="text-slate-400">…6 more</div><div class="leak-txt">Tag ✗</div>
+                  </div>
+                </div>
+                <div class="border border-slate-300 rounded bg-white">
+                  <div class="px-2 py-1 border-b border-slate-200 font-semibold text-slate-600">UpdateDocument</div>
+                  <div class="px-2 py-1 font-mono text-slate-500 space-y-0.5">
+                    <div>Schema</div><div>Response</div><div>Parameter</div><div class="text-slate-400">…6 more</div><div class="text-emerald-600">Tag ✓</div>
+                  </div>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-3">One mapping, triplicated. <span class="leak-txt font-medium">Tag</span> exists in one switch, missing from the other two — the leak made visible.</p>
+            </div>
+            <!-- AFTER -->
+            <div class="bg-white p-5">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3 schem">After — one slot table, three callers</p>
+              <div class="flex flex-col items-center gap-3 pt-2">
+                <div class="flex gap-2 text-[10px] font-mono text-slate-500">
+                  <span class="px-2 py-1 border border-slate-300 rounded">exists?</span>
+                  <span class="px-2 py-1 border border-slate-300 rounded">resolve</span>
+                  <span class="px-2 py-1 border border-slate-300 rounded">write</span>
+                </div>
+                <svg width="160" height="22"><line x1="30" y1="0" x2="80" y2="22" stroke="#94a3b8" stroke-width="1.5"/><line x1="80" y1="0" x2="80" y2="22" stroke="#94a3b8" stroke-width="1.5"/><line x1="130" y1="0" x2="80" y2="22" stroke="#94a3b8" stroke-width="1.5"/></svg>
+                <div class="deep text-white rounded-lg w-full max-w-[260px] shadow-md">
+                  <div class="px-3 py-2 border-b border-white/15 text-xs uppercase tracking-wider schem text-indigo-200">ComponentSlots</div>
+                  <div class="px-3 py-2 font-mono text-[11px] text-slate-300 space-y-0.5">
+                    <div>Schema&nbsp;&nbsp;→ Components.Schemas</div>
+                    <div>Response → Components.Responses</div>
+                    <div class="text-slate-400">… all 9 + Tag, once</div>
+                  </div>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-3">Small interface keyed by <code>ReferenceType</code>; the per-type mapping lives once, behind it.</p>
+            </div>
+          </div>
+
+          <div class="px-6 py-5 grid md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <p><span class="font-semibold text-slate-700">Problem.</span> The <code>ReferenceType</code>→<code>Components</code> mapping is switched three times across two modules; a new type means editing all three.</p>
+              <p><span class="font-semibold text-slate-700">Solution.</span> One deep module keyed by <code>ReferenceType</code> that knows how to test, read and write each slot — the three switches call into it.</p>
+            </div>
+            <ul class="text-sm space-y-1.5 text-slate-700">
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> locality: type→slot mapping in one place</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> leverage: one table, three call sites</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> the <code>Tag</code> asymmetry can't recur</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> delete two parallel switches</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> deletion test: complexity concentrates, not scatters</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- ============ CARD 2 ============ -->
+        <article id="c2" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 pt-6 pb-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <h2 class="text-2xl font-serif font-semibold"><span class="card-num text-slate-300 mr-2">02</span>Put a seam under document loading</h2>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">Strong</span>
+                <span class="text-xs font-medium uppercase tracking-wide px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700">ports &amp; adapters</span>
+              </div>
+            </div>
+            <p class="font-mono text-sm text-slate-500 mt-3">Visitors/OpenApiReferenceResolverVisitor.cs</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-px bg-slate-200 border-y border-slate-200">
+            <!-- BEFORE -->
+            <div class="bg-stone-50 p-4">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 schem">Before — I/O baked into the walk</p>
+              <div class="rounded-lg bg-white border border-slate-200 p-2">
+                <pre class="mermaid">
+flowchart TB
+  V["OpenApiReferenceResolverVisitor<br/><span>resolve · cache · rewrite</span>"]
+  FS[(Filesystem<br/>Directory.GetFiles)]
+  NET[(Network<br/>HttpClient)]
+  P[OpenApiDocument.Load]
+  V -.->|leak| FS
+  V -.->|leak| NET
+  V -.->|leak| P
+  classDef leak stroke:#dc2626,stroke-width:2px,color:#0f172a,fill:#fff;
+  classDef io fill:#fef2f2,stroke:#dc2626,color:#991b1b;
+  class V leak
+  class FS,NET,P io
+                </pre>
+              </div>
+              <p class="text-xs text-slate-500 mt-2">Resolution can't be exercised without disk or network. Tests reach private <code>GetDocument</code>/<code>TryLoadDocument</code> by reflection — testing <em>past</em> the interface.</p>
+            </div>
+            <!-- AFTER -->
+            <div class="bg-white p-4">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-2 schem">After — resolution depends on a source seam</p>
+              <div class="rounded-lg bg-white border border-slate-200 p-2">
+                <pre class="mermaid">
+flowchart TB
+  V["Reference resolver<br/><span>resolve · cache · rewrite</span>"]
+  PORT{{"IExternalDocumentSource<br/>Resolve(resource) → Document"}}
+  A1["File + HTTP adapter<br/>(production)"]
+  A2["In-memory adapter<br/>(tests)"]
+  V --> PORT
+  PORT --- A1
+  PORT --- A2
+  classDef deep fill:#0f172a,stroke:#0f172a,color:#fff;
+  classDef port fill:#eef2ff,stroke:#6366f1,stroke-dasharray:6 5,color:#3730a3;
+  classDef adp fill:#fff,stroke:#94a3b8,color:#334155;
+  class V deep
+  class PORT port
+  class A1,A2 adp
+                </pre>
+              </div>
+              <p class="text-xs text-slate-500 mt-2">Two adapters justify the seam: file+HTTP in production, in-memory in tests.</p>
+            </div>
+          </div>
+
+          <div class="px-6 py-5 grid md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <p><span class="font-semibold text-slate-700">Problem.</span> The resolver does file discovery, HTTP fetching, parsing <em>and</em> resolution. The interesting logic can only be reached through the filesystem — or by reflection on private methods.</p>
+              <p><span class="font-semibold text-slate-700">Solution.</span> Inject an <code>IExternalDocumentSource</code> that maps an external-resource string to a parsed document. The resolver keeps the logic; transport moves behind the seam.</p>
+            </div>
+            <ul class="text-sm space-y-1.5 text-slate-700">
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> the interface becomes the test surface</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> two adapters justify a real seam</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> resolution tested in-memory — no temp files</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> delete reflection-on-private-method tests</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> I/O stops leaking into the walk</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- ============ CARD 3 ============ -->
+        <article id="c3" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 pt-6 pb-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <h2 class="text-2xl font-serif font-semibold"><span class="card-num text-slate-300 mr-2">03</span>Collapse the two-pass merge into one module</h2>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">Worth exploring</span>
+                <span class="text-xs font-medium uppercase tracking-wide px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">in-process</span>
+              </div>
+            </div>
+            <p class="font-mono text-sm text-slate-500 mt-3">OpenApiDocumentExtensions.cs · Visitors/OpenApiReferenceResolverVisitor.cs · Visitors/OpenApiMissingReferenceVisitor.cs</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-px bg-slate-200 border-y border-slate-200">
+            <!-- BEFORE -->
+            <div class="bg-stone-50 p-5">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3 schem">Before — algorithm spread across four modules</p>
+              <div class="space-y-2 text-[11px]">
+                <div class="border border-slate-300 rounded bg-white px-3 py-2 font-mono text-slate-600">MergeExternalReferences <span class="text-slate-400">— do/while loop</span></div>
+                <div class="flex justify-center"><svg width="16" height="16"><line x1="8" y1="0" x2="8" y2="16" stroke="#94a3b8"/><path d="M4 11 L8 16 L12 11 Z" fill="#94a3b8"/></svg></div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="border border-slate-300 rounded bg-white px-2 py-2 font-mono text-slate-600">ResolverVisitor<br/><span class="text-slate-400">+ Cache</span></div>
+                  <div class="border border-slate-300 rounded bg-white px-2 py-2 font-mono text-slate-600">MissingVisitor<br/><span class="text-slate-400">+ Cache</span></div>
+                </div>
+                <p class="text-xs text-slate-500 pt-1">Two near-identical <code>Visit</code> bodies, two caches, the loop that ties them sitting in a third module. Reading the algorithm means bouncing across four files.</p>
+              </div>
+            </div>
+            <!-- AFTER -->
+            <div class="bg-white p-5">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3 schem">After — one deep merge module</p>
+              <div class="flex flex-col items-center gap-2 pt-1">
+                <div class="border border-slate-300 rounded bg-white px-3 py-1.5 font-mono text-[11px] text-slate-600 w-full text-center">MergeExternalReferences <span class="text-slate-400">(public, unchanged)</span></div>
+                <svg width="16" height="16"><line x1="8" y1="0" x2="8" y2="16" stroke="#94a3b8"/><path d="M4 11 L8 16 L12 11 Z" fill="#94a3b8"/></svg>
+                <div class="deep text-white rounded-lg w-full shadow-md">
+                  <div class="px-3 py-2 border-b border-white/15 text-xs uppercase tracking-wider schem text-indigo-200">ExternalReferenceMerger</div>
+                  <div class="px-3 py-2 font-mono text-[10px] text-slate-400 space-y-0.5 faded">
+                    <div>· resolve pass</div><div>· missing pass</div><div>· fixpoint loop · cache</div>
+                  </div>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-3">Passes, loop and caches become internal seams. One interface: <code>Merge(document, source)</code>.</p>
+            </div>
+          </div>
+
+          <div class="px-6 py-5 grid md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <p><span class="font-semibold text-slate-700">Problem.</span> The fixpoint merge algorithm is reconstructed from a loop in one module and two shallow visitors that share most of their body.</p>
+              <p><span class="font-semibold text-slate-700">Solution.</span> One <code>ExternalReferenceMerger</code> owning the loop and both passes, taking the source from card 02 as its dependency. The public extension method delegates to it.</p>
+              <div class="rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">Composes with card 02 — the source seam is this module's one dependency. Sequence after that landing.</div>
+            </div>
+            <ul class="text-sm space-y-1.5 text-slate-700">
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> one interface, one merge algorithm</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> stop bouncing across four modules</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> tests assert merged output, not cache counts</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> two caches become internal seams</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> public extension method keeps its interface</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- ============ CARD 4 ============ -->
+        <article id="c4" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 pt-6 pb-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <h2 class="text-2xl font-serif font-semibold"><span class="card-num text-slate-300 mr-2">04</span>Localize the Microsoft.OpenApi reflection</h2>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full bg-slate-200 text-slate-700">Speculative</span>
+                <span class="text-xs font-medium uppercase tracking-wide px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">single adapter</span>
+              </div>
+            </div>
+            <p class="font-mono text-sm text-slate-500 mt-3">OpenApiDocumentExtensions.cs — OpenApiReferenceExtensions</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-px bg-slate-200 border-y border-slate-200">
+            <!-- BEFORE -->
+            <div class="bg-stone-50 p-5">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3 schem">Before — interface as wide as implementation</p>
+              <div class="flex items-end gap-3 justify-center pt-3" style="height:150px">
+                <div class="text-center">
+                  <div class="w-24 bg-slate-300 rounded-t" style="height:60px"></div>
+                  <div class="w-24 bg-white border border-slate-300 border-t-0 rounded-b" style="height:64px"></div>
+                  <p class="text-[10px] text-slate-500 mt-1">3 helpers,<br/>thin bodies</p>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-2">Reflection on init-only <code>Reference</code> props by string name. Fragile against the library — but already in one place.</p>
+            </div>
+            <!-- AFTER -->
+            <div class="bg-white p-5">
+              <p class="text-xs uppercase tracking-wider text-slate-400 mb-3 schem">After — one deep adapter over the library</p>
+              <div class="flex items-end gap-3 justify-center pt-3" style="height:150px">
+                <div class="text-center">
+                  <div class="w-24 deep rounded-t" style="height:30px"></div>
+                  <div class="w-24 bg-slate-700 rounded-b" style="height:94px"></div>
+                  <p class="text-[10px] text-slate-500 mt-1">small interface,<br/>reflection hidden</p>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-2">One <code>OpenApiReferenceGateway</code> hides the reflection; callers see typed reads/writes.</p>
+            </div>
+          </div>
+
+          <div class="px-6 py-5 grid md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <p><span class="font-semibold text-slate-700">Problem.</span> Init-only <code>Reference</code> properties are read and written by reflection with string property names — fragile against Microsoft.OpenApi upgrades.</p>
+              <p><span class="font-semibold text-slate-700">Solution.</span> Keep it in one deep adapter with a typed interface, so the reflection is the implementation and never the caller's concern.</p>
+              <div class="rounded-md bg-slate-50 border border-slate-200 px-3 py-2 text-xs text-slate-600"><span class="font-semibold">Honest read:</span> only one adapter exists (the real library). One adapter = a hypothetical seam. No port is justified — this is localization, not a new seam.</div>
+            </div>
+            <ul class="text-sm space-y-1.5 text-slate-700">
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> reflection concentrates in one module</li>
+              <li class="flex gap-2"><span class="text-emerald-600">▪</span> interface shrinks; implementation absorbs it</li>
+              <li class="flex gap-2"><span class="text-slate-400">▪</span> low urgency — already mostly localized</li>
+            </ul>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- ───────────────────────── TOP RECOMMENDATION ───────────────────────── -->
+      <section id="top-recommendation">
+        <div class="deep text-white rounded-2xl p-8 shadow-lg">
+          <p class="text-xs uppercase tracking-widest text-indigo-300 mb-3 schem">Top recommendation</p>
+          <h3 class="text-2xl font-serif font-semibold mb-3">Start with <a href="#c2" class="underline decoration-indigo-400 underline-offset-4">02 — put a seam under document loading</a>.</h3>
+          <p class="text-slate-300 max-w-3xl">It buys the largest testability win and unblocks the rest. Today the resolution logic is only reachable through disk, network, or reflection on private methods — the clearest sign the interface is the wrong shape. A document-source seam with two adapters (file+HTTP in production, in-memory in tests) makes the interface the test surface, and gives card 03 the dependency it needs to collapse the two passes into one deep merge module. Card 01 stands alone and is the cheapest quick win.</p>
+        </div>
+      </section>
+
+      <footer class="text-center text-xs text-slate-400 pt-4">
+        Vocabulary: module · interface · implementation · depth · seam · adapter · leverage · locality.
+      </footer>
+
+    </main>
+  </body>
+</html>
