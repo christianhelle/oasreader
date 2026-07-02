@@ -226,6 +226,46 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public void ComponentResolver_ReturnsNull_WhenIdIsMissingFromCollections()
+    {
+        var document = new OpenApiDocument
+        {
+            Components = new OpenApiComponents
+            {
+                Schemas = new Dictionary<string, IOpenApiSchema>(),
+                Responses = new Dictionary<string, IOpenApiResponse>(),
+                Parameters = new Dictionary<string, IOpenApiParameter>(),
+                Examples = new Dictionary<string, IOpenApiExample>(),
+                RequestBodies = new Dictionary<string, IOpenApiRequestBody>(),
+                Headers = new Dictionary<string, IOpenApiHeader>(),
+                SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>(),
+                Links = new Dictionary<string, IOpenApiLink>(),
+                Callbacks = new Dictionary<string, IOpenApiCallback>(),
+            },
+        };
+
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Schema, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Response, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Parameter, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Example, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.RequestBody, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Header, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.SecurityScheme, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Link, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Callback, "Missing").Should().BeFalse();
+
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Schema, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Response, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Parameter, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Example, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.RequestBody, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Header, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.SecurityScheme, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Link, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Callback, "Missing").Should().BeNull();
+    }
+
+    [Fact]
     public void ReferenceCache_UpdateDocument_Throws_ForUnsupportedReferenceType()
     {
         var cache = new ReferenceCache();
