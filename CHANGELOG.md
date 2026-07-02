@@ -7,6 +7,7 @@
 **Merged pull requests:**
 
 - Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 [\#196](https://github.com/christianhelle/oasreader/pull/196) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump Microsoft.OpenApi and Microsoft.OpenApi.YamlReader [\#195](https://github.com/christianhelle/oasreader/pull/195) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update openapi-dotnet monorepo to 3.5.5 [\#189](https://github.com/christianhelle/oasreader/pull/189) ([renovate[bot]](https://github.com/apps/renovate))
 - Bump Microsoft.OpenApi and Microsoft.OpenApi.YamlReader [\#188](https://github.com/christianhelle/oasreader/pull/188) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.NET.Test.Sdk from 18.5.1 to 18.6.0 [\#186](https://github.com/christianhelle/oasreader/pull/186) ([dependabot[bot]](https://github.com/apps/dependabot))
