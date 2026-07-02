@@ -507,6 +507,28 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public async Task OpenApiReferenceResolverVisitor_Returns_WhenComponentNotFoundInExternalDocument()
+    {
+        var cachedDocument = await LoadDocumentFromTextAsync(CreateComponentsDocument());
+        var visitor = new OpenApiReferenceResolverVisitor(
+            "openapi.yaml",
+            new Dictionary<string, OpenApiDocument> { ["components.yaml"] = cachedDocument });
+        var holder = new FakeReferenceHolder
+        {
+            Reference = new BaseOpenApiReference
+            {
+                Id = "Missing",
+                Type = ReferenceType.Schema,
+                ExternalResource = "components.yaml",
+            },
+        };
+
+        visitor.Visit(holder);
+
+        visitor.Cache.Count.Should().Be(0);
+    }
+
+    [Fact]
     public async Task OpenApiReferenceResolverVisitor_Returns_WhenReferenceIdIsNull()
     {
         var cachedDocument = await LoadDocumentFromTextAsync(CreateComponentsDocument());
