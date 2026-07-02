@@ -226,6 +226,12 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public void ComponentResolver_ReturnsNull_WhenComponentsIsNull()
+    {
+        ComponentResolver.ResolveFromDocument(new OpenApiDocument(), ReferenceType.Schema, "Pet").Should().BeNull();
+    }
+
+    [Fact]
     public void ComponentResolver_ReturnsNull_WhenIdIsMissingFromCollections()
     {
         var document = new OpenApiDocument
