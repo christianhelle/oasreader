@@ -1,3 +1,4 @@
+using System.Text;
 using FluentAssertions;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Reader;
@@ -83,6 +84,537 @@ public class OpenApiDocumentExtensionsTests
         result.Document!.ContainsExternalReferences().Should().BeFalse();
     }
 
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WhenPathsIsNull()
+    {
+        var sut = new OpenApiDocument { Paths = null };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithPathItemParameterSchemaExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                parameters:
+                  - name: PetId
+                    in: query
+                    schema:
+                      $ref: 'components.yaml#/components/schemas/Pet'
+                get:
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeFalse_WithPathItemParameterLocalSchema()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                parameters:
+                  - name: Limit
+                    in: query
+                    schema:
+                      type: integer
+                get:
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithOperationParameterSchemaExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  parameters:
+                    - name: PetId
+                      in: query
+                      schema:
+                        $ref: 'components.yaml#/components/schemas/Pet'
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeFalse_WithOperationParameterLocalSchema()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  parameters:
+                    - name: Limit
+                      in: query
+                      schema:
+                        type: integer
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithRequestBodyContentExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                post:
+                  requestBody:
+                    content:
+                      application/json:
+                        schema:
+                          $ref: 'components.yaml#/components/schemas/Pet'
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithResponseHeaderExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      description: ok
+                      headers:
+                        X-RateLimit:
+                          schema:
+                            $ref: 'components.yaml#/components/schemas/Pet'
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithPathItemParameterExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                parameters:
+                  - $ref: 'components.yaml#/components/parameters/PetId'
+                get:
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithPathItemParameterContentExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                parameters:
+                  - name: PetId
+                    in: query
+                    content:
+                      application/json:
+                        schema:
+                          $ref: 'components.yaml#/components/schemas/Pet'
+                get:
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithOperationParameterExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  parameters:
+                    - $ref: 'components.yaml#/components/parameters/PetId'
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithOperationParameterContentExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  parameters:
+                    - name: PetId
+                      in: query
+                      content:
+                        application/json:
+                          schema:
+                            $ref: 'components.yaml#/components/schemas/Pet'
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeFalse_WithResponseHeaderLocalSchema()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      description: ok
+                      headers:
+                        X-RateLimit:
+                          schema:
+                            type: integer
+            """);
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeFalse_WithRequestBodyLocalSchema()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                post:
+                  requestBody:
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WithPathItemNullParameter()
+    {
+        var sut = new OpenApiDocument
+        {
+            Paths = new OpenApiPaths
+            {
+                ["/pets"] = new OpenApiPathItem
+                {
+                    Parameters = new List<IOpenApiParameter> { null! }
+                }
+            }
+        };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WithOperationNullParameter()
+    {
+        var sut = new OpenApiDocument
+        {
+            Paths = new OpenApiPaths
+            {
+                ["/pets"] = new OpenApiPathItem
+                {
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                    {
+                        [HttpMethod.Get] = new OpenApiOperation
+                        {
+                            Parameters = new List<IOpenApiParameter> { null! }
+                        }
+                    }
+                }
+            }
+        };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WithNullResponseValue()
+    {
+        var sut = new OpenApiDocument
+        {
+            Paths = new OpenApiPaths
+            {
+                ["/pets"] = new OpenApiPathItem
+                {
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                    {
+                        [HttpMethod.Get] = new OpenApiOperation
+                        {
+                            Responses = new OpenApiResponses { ["200"] = null! }
+                        }
+                    }
+                }
+            }
+        };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WithNullContentValue()
+    {
+        var sut = new OpenApiDocument
+        {
+            Paths = new OpenApiPaths
+            {
+                ["/pets"] = new OpenApiPathItem
+                {
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                    {
+                        [HttpMethod.Get] = new OpenApiOperation
+                        {
+                            Responses = new OpenApiResponses
+                            {
+                                ["200"] = new OpenApiResponse
+                                {
+                                    Content = new Dictionary<string, IOpenApiMediaType> { ["application/json"] = null! }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WithNullHeaderValue()
+    {
+        var sut = new OpenApiDocument
+        {
+            Paths = new OpenApiPaths
+            {
+                ["/pets"] = new OpenApiPathItem
+                {
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                    {
+                        [HttpMethod.Get] = new OpenApiOperation
+                        {
+                            Responses = new OpenApiResponses
+                            {
+                                ["200"] = new OpenApiResponse
+                                {
+                                    Headers = new Dictionary<string, IOpenApiHeader> { ["X-RateLimit"] = null! }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeFalse_WithResponseContentLocalSchema()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      description: ok
+                      content:
+                        application/json:
+                          schema:
+                            type: object
+            """);
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeFalse_WithOperationParameterContentLocalSchema()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  parameters:
+                    - name: PetId
+                      in: query
+                      content:
+                        application/json:
+                          schema:
+                            type: object
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WhenOperationResponsesIsNull()
+    {
+        var sut = new OpenApiDocument
+        {
+            Paths = new OpenApiPaths
+            {
+                ["/pets"] = new OpenApiPathItem
+                {
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                    {
+                        [HttpMethod.Get] = new OpenApiOperation { Responses = null! }
+                    }
+                }
+            }
+        };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WhenRequestBodyContentIsNull()
+    {
+        var sut = new OpenApiDocument
+        {
+            Paths = new OpenApiPaths
+            {
+                ["/pets"] = new OpenApiPathItem
+                {
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                    {
+                        [HttpMethod.Post] = new OpenApiOperation
+                        {
+                            RequestBody = new OpenApiRequestBody()
+                        }
+                    }
+                }
+            }
+        };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithResponseContentMultipleMediaTypes()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      description: ok
+                      content:
+                        application/json:
+                          schema:
+                            type: object
+                        application/xml:
+                          schema:
+                            $ref: 'components.yaml#/components/schemas/Pet'
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
     [Theory]
     [InlineData("https://developers.intellihr.io/docs/v1/swagger.json")] // GZIP encoded
     [InlineData("http://raw.githubusercontent.com/christianhelle/refitter/main/test/OpenAPI/v3.0/petstore.json")]
@@ -153,5 +685,15 @@ public class OpenApiDocumentExtensionsTests
         var result = await OpenApiMultiFileReader.Read(openapiFilename, ValidationRuleSet.GetEmptyRuleSet());
 
         result.OpenApiDiagnostic.Errors.Should().BeEmpty();
+    }
+
+    private static async Task<OpenApiDocument> LoadDocumentFromTextAsync(string contents)
+    {
+        await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+        var settings = new OpenApiReaderSettings();
+        settings.AddYamlReader();
+        var result = await OpenApiDocument.LoadAsync(stream, settings: settings);
+        result.Document.Should().NotBeNull();
+        return result.Document!;
     }
 }

@@ -29,6 +29,28 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public async Task MergeExternalReferences_PreservesDocumentWithoutSchemas()
+    {
+        var document = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Empty
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        var merged = document.MergeExternalReferences("openapi.yaml");
+
+        merged.Components.Should().NotBeNull();
+        merged.Components!.Schemas.Should().BeNull();
+    }
+
+    [Fact]
     public async Task MergeExternalReferencesAsStringAsync_ReturnsJson_WhenInputIsJson()
     {
         var folder = CreateTemporaryFolder();
@@ -108,6 +130,15 @@ public class InternalBehaviorTests
         var action = () => holder.SetLocalReference("Pet", ReferenceType.Schema);
 
         action.Should().NotThrow();
+    }
+
+    [Fact]
+    public void OpenApiReferenceExtensions_GetBaseReference_ReturnsNull_WhenHolderHasNoReferenceProperty()
+    {
+        var holder = new NoReferencePropertyHolder();
+
+        holder.GetBaseReference().Should().BeNull();
+        holder.HasExternalReference().Should().BeFalse();
     }
 
     [Fact]
@@ -197,6 +228,78 @@ public class InternalBehaviorTests
         document.Components.Links.Should().ContainKey("NextPage").WhoseValue.Should().BeSameAs(link);
         document.Components.Callbacks.Should().ContainKey("OnPet").WhoseValue.Should().BeSameAs(callback);
         document.Tags.Should().Contain(tag);
+    }
+
+    [Fact]
+    public void ComponentResolver_ReturnsFalse_WhenComponentCollectionsAreNull()
+    {
+        var document = new OpenApiDocument { Components = new OpenApiComponents() };
+
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Schema, "Pet").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Response, "Ok").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Parameter, "TraceId").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Example, "PetExample").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.RequestBody, "CreatePet").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Header, "RateLimit").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.SecurityScheme, "Bearer").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Link, "NextPage").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Callback, "OnPet").Should().BeFalse();
+
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Schema, "Pet").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Response, "Ok").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Parameter, "TraceId").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Example, "PetExample").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.RequestBody, "CreatePet").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Header, "RateLimit").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.SecurityScheme, "Bearer").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Link, "NextPage").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Callback, "OnPet").Should().BeNull();
+    }
+
+    [Fact]
+    public void ComponentResolver_ReturnsNull_WhenComponentsIsNull()
+    {
+        ComponentResolver.ResolveFromDocument(new OpenApiDocument(), ReferenceType.Schema, "Pet").Should().BeNull();
+    }
+
+    [Fact]
+    public void ComponentResolver_ReturnsNull_WhenIdIsMissingFromCollections()
+    {
+        var document = new OpenApiDocument
+        {
+            Components = new OpenApiComponents
+            {
+                Schemas = new Dictionary<string, IOpenApiSchema>(),
+                Responses = new Dictionary<string, IOpenApiResponse>(),
+                Parameters = new Dictionary<string, IOpenApiParameter>(),
+                Examples = new Dictionary<string, IOpenApiExample>(),
+                RequestBodies = new Dictionary<string, IOpenApiRequestBody>(),
+                Headers = new Dictionary<string, IOpenApiHeader>(),
+                SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>(),
+                Links = new Dictionary<string, IOpenApiLink>(),
+                Callbacks = new Dictionary<string, IOpenApiCallback>(),
+            },
+        };
+
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Schema, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Response, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Parameter, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Example, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.RequestBody, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Header, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.SecurityScheme, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Link, "Missing").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Callback, "Missing").Should().BeFalse();
+
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Schema, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Response, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Parameter, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Example, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.RequestBody, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Header, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.SecurityScheme, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Link, "Missing").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Callback, "Missing").Should().BeNull();
     }
 
     [Fact]
@@ -294,6 +397,24 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public void OpenApiMissingReferenceVisitor_Returns_WhenReferenceIdIsNull()
+    {
+        var visitor = new OpenApiMissingReferenceVisitor(new OpenApiDocument(), new Dictionary<string, OpenApiDocument>());
+        var holder = new FakeReferenceHolder
+        {
+            Reference = new BaseOpenApiReference
+            {
+                Id = null,
+                Type = ReferenceType.Schema,
+            },
+        };
+
+        visitor.Visit(holder);
+
+        visitor.Cache.Count.Should().Be(0);
+    }
+
+    [Fact]
     public async Task OpenApiMissingReferenceVisitor_Continues_WhenCacheDocumentThrows()
     {
         var document = await LoadDocumentFromTextAsync(CreateOpenApiWithLocalReference());
@@ -305,6 +426,34 @@ public class InternalBehaviorTests
             });
 
         new OpenApiWalker(visitor).Walk(document);
+
+        visitor.Cache.Count.Should().Be(0);
+    }
+
+    [Fact]
+    public void OpenApiReferenceResolverVisitor_Returns_WhenReferenceIsNotExternal()
+    {
+        var visitor = new OpenApiReferenceResolverVisitor("openapi.yaml", new Dictionary<string, OpenApiDocument>());
+        var holder = new FakeReferenceHolder
+        {
+            Reference = new BaseOpenApiReference
+            {
+                Id = "Pet",
+                Type = ReferenceType.Schema,
+            },
+        };
+
+        visitor.Visit(holder);
+
+        visitor.Cache.Count.Should().Be(0);
+    }
+
+    [Fact]
+    public void OpenApiReferenceResolverVisitor_Returns_WhenBaseReferenceIsNull()
+    {
+        var visitor = new OpenApiReferenceResolverVisitor("openapi.yaml", new Dictionary<string, OpenApiDocument>());
+
+        visitor.Visit(new FakeReferenceHolder());
 
         visitor.Cache.Count.Should().Be(0);
     }
@@ -386,6 +535,50 @@ public class InternalBehaviorTests
 
         loaded.Should().BeFalse();
         parameters[1].Should().BeNull();
+    }
+
+    [Fact]
+    public async Task OpenApiReferenceResolverVisitor_Returns_WhenComponentNotFoundInExternalDocument()
+    {
+        var cachedDocument = await LoadDocumentFromTextAsync(CreateComponentsDocument());
+        var visitor = new OpenApiReferenceResolverVisitor(
+            "openapi.yaml",
+            new Dictionary<string, OpenApiDocument> { ["components.yaml"] = cachedDocument });
+        var holder = new FakeReferenceHolder
+        {
+            Reference = new BaseOpenApiReference
+            {
+                Id = "Missing",
+                Type = ReferenceType.Schema,
+                ExternalResource = "components.yaml",
+            },
+        };
+
+        visitor.Visit(holder);
+
+        visitor.Cache.Count.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task OpenApiReferenceResolverVisitor_Returns_WhenReferenceIdIsNull()
+    {
+        var cachedDocument = await LoadDocumentFromTextAsync(CreateComponentsDocument());
+        var visitor = new OpenApiReferenceResolverVisitor(
+            "openapi.yaml",
+            new Dictionary<string, OpenApiDocument> { ["components.yaml"] = cachedDocument });
+        var holder = new FakeReferenceHolder
+        {
+            Reference = new BaseOpenApiReference
+            {
+                Id = null,
+                Type = ReferenceType.Schema,
+                ExternalResource = "components.yaml",
+            },
+        };
+
+        visitor.Visit(holder);
+
+        visitor.Cache.Count.Should().Be(0);
     }
 
     [Fact]
@@ -509,6 +702,15 @@ public class InternalBehaviorTests
     private sealed class FakeReferenceHolder : IOpenApiReferenceHolder
     {
         public BaseOpenApiReference? Reference { get; init; }
+        public bool UnresolvedReference => false;
+        public void SerializeAsV2(IOpenApiWriter writer) { }
+        public void SerializeAsV3(IOpenApiWriter writer) { }
+        public void SerializeAsV31(IOpenApiWriter writer) { }
+        public void SerializeAsV32(IOpenApiWriter writer) { }
+    }
+
+    private sealed class NoReferencePropertyHolder : IOpenApiReferenceHolder
+    {
         public bool UnresolvedReference => false;
         public void SerializeAsV2(IOpenApiWriter writer) { }
         public void SerializeAsV3(IOpenApiWriter writer) { }
