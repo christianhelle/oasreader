@@ -29,6 +29,28 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public async Task MergeExternalReferences_PreservesDocumentWithoutSchemas()
+    {
+        var document = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Empty
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        var merged = document.MergeExternalReferences("openapi.yaml");
+
+        merged.Components.Should().NotBeNull();
+        merged.Components!.Schemas.Should().BeNull();
+    }
+
+    [Fact]
     public async Task MergeExternalReferencesAsStringAsync_ReturnsJson_WhenInputIsJson()
     {
         var folder = CreateTemporaryFolder();
