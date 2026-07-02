@@ -111,6 +111,15 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public void OpenApiReferenceExtensions_GetBaseReference_ReturnsNull_WhenHolderHasNoReferenceProperty()
+    {
+        var holder = new NoReferencePropertyHolder();
+
+        holder.GetBaseReference().Should().BeNull();
+        holder.HasExternalReference().Should().BeFalse();
+    }
+
+    [Fact]
     public void ComponentResolver_Supports_AllDocumentComponentTypes()
     {
         var schema = new OpenApiSchema();
@@ -671,6 +680,15 @@ public class InternalBehaviorTests
     private sealed class FakeReferenceHolder : IOpenApiReferenceHolder
     {
         public BaseOpenApiReference? Reference { get; init; }
+        public bool UnresolvedReference => false;
+        public void SerializeAsV2(IOpenApiWriter writer) { }
+        public void SerializeAsV3(IOpenApiWriter writer) { }
+        public void SerializeAsV31(IOpenApiWriter writer) { }
+        public void SerializeAsV32(IOpenApiWriter writer) { }
+    }
+
+    private sealed class NoReferencePropertyHolder : IOpenApiReferenceHolder
+    {
         public bool UnresolvedReference => false;
         public void SerializeAsV2(IOpenApiWriter writer) { }
         public void SerializeAsV3(IOpenApiWriter writer) { }
