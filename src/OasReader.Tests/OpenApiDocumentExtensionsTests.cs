@@ -497,6 +497,55 @@ public class OpenApiDocumentExtensionsTests
         sut.ContainsExternalReferences().Should().BeFalse();
     }
 
+    [Fact]
+    public async Task ContainsExternalReferences_BeFalse_WithResponseContentLocalSchema()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  responses:
+                    '200':
+                      description: ok
+                      content:
+                        application/json:
+                          schema:
+                            type: object
+            """);
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsExternalReferences_BeFalse_WithOperationParameterContentLocalSchema()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                get:
+                  parameters:
+                    - name: PetId
+                      in: query
+                      content:
+                        application/json:
+                          schema:
+                            type: object
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
     [Theory]
     [InlineData("https://developers.intellihr.io/docs/v1/swagger.json")] // GZIP encoded
     [InlineData("http://raw.githubusercontent.com/christianhelle/refitter/main/test/OpenAPI/v3.0/petstore.json")]
