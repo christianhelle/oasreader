@@ -87,7 +87,7 @@ public class OpenApiDocumentExtensionsTests
     [Fact]
     public void ContainsExternalReferences_BeFalse_WhenPathsIsNull()
     {
-        var sut = new OpenApiDocument();
+        var sut = new OpenApiDocument { Paths = null };
 
         sut.ContainsExternalReferences().Should().BeFalse();
     }
