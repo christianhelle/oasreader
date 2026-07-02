@@ -400,6 +400,24 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public void OpenApiReferenceResolverVisitor_Returns_WhenReferenceIsNotExternal()
+    {
+        var visitor = new OpenApiReferenceResolverVisitor("openapi.yaml", new Dictionary<string, OpenApiDocument>());
+        var holder = new FakeReferenceHolder
+        {
+            Reference = new BaseOpenApiReference
+            {
+                Id = "Pet",
+                Type = ReferenceType.Schema,
+            },
+        };
+
+        visitor.Visit(holder);
+
+        visitor.Cache.Count.Should().Be(0);
+    }
+
+    [Fact]
     public void OpenApiReferenceResolverVisitor_Returns_WhenBaseReferenceIsNull()
     {
         var visitor = new OpenApiReferenceResolverVisitor("openapi.yaml", new Dictionary<string, OpenApiDocument>());
