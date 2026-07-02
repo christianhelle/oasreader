@@ -200,6 +200,32 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public void ComponentResolver_ReturnsFalse_WhenComponentCollectionsAreNull()
+    {
+        var document = new OpenApiDocument { Components = new OpenApiComponents() };
+
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Schema, "Pet").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Response, "Ok").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Parameter, "TraceId").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Example, "PetExample").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.RequestBody, "CreatePet").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Header, "RateLimit").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.SecurityScheme, "Bearer").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Link, "NextPage").Should().BeFalse();
+        ComponentResolver.ExistsInDocument(document, ReferenceType.Callback, "OnPet").Should().BeFalse();
+
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Schema, "Pet").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Response, "Ok").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Parameter, "TraceId").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Example, "PetExample").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.RequestBody, "CreatePet").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Header, "RateLimit").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.SecurityScheme, "Bearer").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Link, "NextPage").Should().BeNull();
+        ComponentResolver.ResolveFromDocument(document, ReferenceType.Callback, "OnPet").Should().BeNull();
+    }
+
+    [Fact]
     public void ReferenceCache_UpdateDocument_Throws_ForUnsupportedReferenceType()
     {
         var cache = new ReferenceCache();
