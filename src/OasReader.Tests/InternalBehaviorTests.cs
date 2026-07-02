@@ -366,6 +366,24 @@ public class InternalBehaviorTests
     }
 
     [Fact]
+    public void OpenApiMissingReferenceVisitor_Returns_WhenReferenceIdIsNull()
+    {
+        var visitor = new OpenApiMissingReferenceVisitor(new OpenApiDocument(), new Dictionary<string, OpenApiDocument>());
+        var holder = new FakeReferenceHolder
+        {
+            Reference = new BaseOpenApiReference
+            {
+                Id = null,
+                Type = ReferenceType.Schema,
+            },
+        };
+
+        visitor.Visit(holder);
+
+        visitor.Cache.Count.Should().Be(0);
+    }
+
+    [Fact]
     public async Task OpenApiMissingReferenceVisitor_Continues_WhenCacheDocumentThrows()
     {
         var document = await LoadDocumentFromTextAsync(CreateOpenApiWithLocalReference());
