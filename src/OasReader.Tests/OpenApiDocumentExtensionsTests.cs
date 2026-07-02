@@ -468,6 +468,35 @@ public class OpenApiDocumentExtensionsTests
         sut.ContainsExternalReferences().Should().BeFalse();
     }
 
+    [Fact]
+    public void ContainsExternalReferences_BeFalse_WithNullHeaderValue()
+    {
+        var sut = new OpenApiDocument
+        {
+            Paths = new OpenApiPaths
+            {
+                ["/pets"] = new OpenApiPathItem
+                {
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                    {
+                        [HttpMethod.Get] = new OpenApiOperation
+                        {
+                            Responses = new OpenApiResponses
+                            {
+                                ["200"] = new OpenApiResponse
+                                {
+                                    Headers = new Dictionary<string, IOpenApiHeader> { ["X-RateLimit"] = null! }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        sut.ContainsExternalReferences().Should().BeFalse();
+    }
+
     [Theory]
     [InlineData("https://developers.intellihr.io/docs/v1/swagger.json")] // GZIP encoded
     [InlineData("http://raw.githubusercontent.com/christianhelle/refitter/main/test/OpenAPI/v3.0/petstore.json")]
