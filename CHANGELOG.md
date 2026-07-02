@@ -2,7 +2,15 @@
 
 ## [Unreleased](https://github.com/christianhelle/oasreader/tree/HEAD)
 
-[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.5.0.19...HEAD)
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.7.0.20...HEAD)
+
+**Merged pull requests:**
+
+- Improve code coverage [\#198](https://github.com/christianhelle/oasreader/pull/198) ([christianhelle](https://github.com/christianhelle))
+
+## [3.7.0.20](https://github.com/christianhelle/oasreader/tree/3.7.0.20) (2026-07-02)
+
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.5.0.19...3.7.0.20)
 
 **Merged pull requests:**
 
