@@ -1,3 +1,4 @@
+using System.Text;
 using FluentAssertions;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Reader;
@@ -91,6 +92,30 @@ public class OpenApiDocumentExtensionsTests
         sut.ContainsExternalReferences().Should().BeFalse();
     }
 
+    [Fact]
+    public async Task ContainsExternalReferences_BeTrue_WithPathItemParameterSchemaExternalRef()
+    {
+        var sut = await LoadDocumentFromTextAsync("""
+            openapi: 3.0.1
+            info:
+              title: Test
+              version: "1.0"
+            paths:
+              /pets:
+                parameters:
+                  - name: PetId
+                    in: query
+                    schema:
+                      $ref: 'components.yaml#/components/schemas/Pet'
+                get:
+                  responses:
+                    '200':
+                      description: ok
+            """);
+
+        sut.ContainsExternalReferences().Should().BeTrue();
+    }
+
     [Theory]
     [InlineData("https://developers.intellihr.io/docs/v1/swagger.json")] // GZIP encoded
     [InlineData("http://raw.githubusercontent.com/christianhelle/refitter/main/test/OpenAPI/v3.0/petstore.json")]
@@ -161,5 +186,15 @@ public class OpenApiDocumentExtensionsTests
         var result = await OpenApiMultiFileReader.Read(openapiFilename, ValidationRuleSet.GetEmptyRuleSet());
 
         result.OpenApiDiagnostic.Errors.Should().BeEmpty();
+    }
+
+    private static async Task<OpenApiDocument> LoadDocumentFromTextAsync(string contents)
+    {
+        await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+        var settings = new OpenApiReaderSettings();
+        settings.AddYamlReader();
+        var result = await OpenApiDocument.LoadAsync(stream, settings: settings);
+        result.Document.Should().NotBeNull();
+        return result.Document!;
     }
 }
