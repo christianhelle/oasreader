@@ -37,7 +37,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.OpenApi" Version="3.7.0" />
     <PackageReference Include="Microsoft.OpenApi.YamlReader" Version="3.7.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
