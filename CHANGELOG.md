@@ -6,6 +6,8 @@
 
 **Merged pull requests:**
 
+- Bump Microsoft.SourceLink.GitHub from 10.0.300 to 10.0.400 [\#212](https://github.com/christianhelle/oasreader/pull/212) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update codecov/codecov-action action to v7 [\#200](https://github.com/christianhelle/oasreader/pull/200) ([renovate[bot]](https://github.com/apps/renovate))
 - Improve code coverage [\#198](https://github.com/christianhelle/oasreader/pull/198) ([christianhelle](https://github.com/christianhelle))
 
 ## [3.7.0.20](https://github.com/christianhelle/oasreader/tree/3.7.0.20) (2026-07-02)
