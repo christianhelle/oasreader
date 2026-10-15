@@ -1,5 +1,5 @@
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Reader;
 using Xunit;
