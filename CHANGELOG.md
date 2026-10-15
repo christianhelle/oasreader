@@ -6,9 +6,16 @@
 
 **Merged pull requests:**
 
+- Bump Microsoft.NET.Test.Sdk from 18.7.0 to 18.11.0 [\#227](https://github.com/christianhelle/oasreader/pull/227) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump xunit.runner.visualstudio from 3.1.5 to 4.0.1 [\#226](https://github.com/christianhelle/oasreader/pull/226) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverlet.collector from 10.0.1 to 10.1.0 [\#225](https://github.com/christianhelle/oasreader/pull/225) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update dependency Microsoft.SourceLink.GitHub to 10.0.402 [\#220](https://github.com/christianhelle/oasreader/pull/220) ([renovate[bot]](https://github.com/apps/renovate))
+- Bump Microsoft.OpenApi and Microsoft.OpenApi.YamlReader [\#219](https://github.com/christianhelle/oasreader/pull/219) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.OpenApi and Microsoft.OpenApi.YamlReader [\#214](https://github.com/christianhelle/oasreader/pull/214) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.SourceLink.GitHub from 10.0.300 to 10.0.400 [\#212](https://github.com/christianhelle/oasreader/pull/212) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update dependency ruby to v4.0.7 [\#205](https://github.com/christianhelle/oasreader/pull/205) ([renovate[bot]](https://github.com/apps/renovate))
 - Update codecov/codecov-action action to v7 [\#200](https://github.com/christianhelle/oasreader/pull/200) ([renovate[bot]](https://github.com/apps/renovate))
+- Update actions/checkout action to v7 [\#199](https://github.com/christianhelle/oasreader/pull/199) ([renovate[bot]](https://github.com/apps/renovate))
 - Improve code coverage [\#198](https://github.com/christianhelle/oasreader/pull/198) ([christianhelle](https://github.com/christianhelle))
 
 ## [3.7.0.20](https://github.com/christianhelle/oasreader/tree/3.7.0.20) (2026-07-02)
