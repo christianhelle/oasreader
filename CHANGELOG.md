@@ -14,6 +14,7 @@
 - Bump Microsoft.OpenApi and Microsoft.OpenApi.YamlReader [\#214](https://github.com/christianhelle/oasreader/pull/214) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.SourceLink.GitHub from 10.0.300 to 10.0.400 [\#212](https://github.com/christianhelle/oasreader/pull/212) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update dependency ruby to v4.0.7 [\#205](https://github.com/christianhelle/oasreader/pull/205) ([renovate[bot]](https://github.com/apps/renovate))
+- Update dependency Atc.Test to v3 [\#201](https://github.com/christianhelle/oasreader/pull/201) ([renovate[bot]](https://github.com/apps/renovate))
 - Update codecov/codecov-action action to v7 [\#200](https://github.com/christianhelle/oasreader/pull/200) ([renovate[bot]](https://github.com/apps/renovate))
 - Update actions/checkout action to v7 [\#199](https://github.com/christianhelle/oasreader/pull/199) ([renovate[bot]](https://github.com/apps/renovate))
 - Improve code coverage [\#198](https://github.com/christianhelle/oasreader/pull/198) ([christianhelle](https://github.com/christianhelle))
