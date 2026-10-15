@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Reader;
 using OasReader.Visitors;
