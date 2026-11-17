@@ -2,7 +2,17 @@
 
 ## [Unreleased](https://github.com/christianhelle/oasreader/tree/HEAD)
 
-[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.7.0.20...HEAD)
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.10.2.21...HEAD)
+
+**Merged pull requests:**
+
+- Bump Microsoft.OpenApi and Microsoft.OpenApi.YamlReader [\#244](https://github.com/christianhelle/oasreader/pull/244) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverlet.collector from 10.1.0 to 10.1.1 [\#242](https://github.com/christianhelle/oasreader/pull/242) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump Microsoft.NET.Test.Sdk from 18.11.0 to 18.12.0 [\#240](https://github.com/christianhelle/oasreader/pull/240) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [3.10.2.21](https://github.com/christianhelle/oasreader/tree/3.10.2.21) (2026-10-15)
+
+[Full Changelog](https://github.com/christianhelle/oasreader/compare/3.7.0.20...3.10.2.21)
 
 **Merged pull requests:**
 
