@@ -11,6 +11,7 @@
 - Bump Microsoft.NET.Test.Sdk from 18.11.0 to 18.12.0 [\#240](https://github.com/christianhelle/oasreader/pull/240) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Update dependency Microsoft.SourceLink.GitHub to v11 [\#237](https://github.com/christianhelle/oasreader/pull/237) ([renovate[bot]](https://github.com/apps/renovate))
 - Bump xunit.v3.mtp-off from 4.0.2 to 4.0.3 [\#235](https://github.com/christianhelle/oasreader/pull/235) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update dependency ruby to v4.0.9 [\#231](https://github.com/christianhelle/oasreader/pull/231) ([renovate[bot]](https://github.com/apps/renovate))
 
 ## [3.10.2.21](https://github.com/christianhelle/oasreader/tree/3.10.2.21) (2026-10-15)
 
