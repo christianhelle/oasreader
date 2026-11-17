@@ -9,6 +9,7 @@
 - Bump Microsoft.OpenApi and Microsoft.OpenApi.YamlReader [\#244](https://github.com/christianhelle/oasreader/pull/244) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump coverlet.collector from 10.1.0 to 10.1.1 [\#242](https://github.com/christianhelle/oasreader/pull/242) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump Microsoft.NET.Test.Sdk from 18.11.0 to 18.12.0 [\#240](https://github.com/christianhelle/oasreader/pull/240) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump xunit.v3.mtp-off from 4.0.2 to 4.0.3 [\#235](https://github.com/christianhelle/oasreader/pull/235) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [3.10.2.21](https://github.com/christianhelle/oasreader/tree/3.10.2.21) (2026-10-15)
 
